@@ -1,0 +1,2096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1b1f4b" />
+  <title>V.A.V. Velu Billing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #1b1f4b;
+      --navy-2: #2a3170;
+      --red: #b42318;
+      --gold: #c9a227;
+      --gold-2: #ead48a;
+      --paper: #fffaf2;
+      --ink: #1c1630;
+      --muted: #5c5670;
+      --line: #e6dcc8;
+      --ok: #1f7a4d;
+      --card: #ffffff;
+      --shadow: 0 10px 30px rgba(27, 31, 75, .12);
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: "Segoe UI", "Noto Sans Tamil", "Nirmala UI", "Latha", Tahoma, sans-serif;
+      background: linear-gradient(180deg, #f4efe3 0%, #efe6d4 100%);
+      color: var(--ink);
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .hidden { display: none !important; }
+    .small { font-size: .8rem; }
+    .wide { width: 100%; }
+
+    /* ---------- App shell ---------- */
+    .app-header {
+      background: linear-gradient(135deg, var(--navy) 0%, #3a1d4a 70%, #7a1f1f 100%);
+      color: #fff;
+      padding: 14px 16px 12px;
+      padding-top: calc(14px + env(safe-area-inset-top, 0px));
+      position: sticky; top: 0; z-index: 20;
+      box-shadow: 0 4px 16px rgba(0,0,0,.2);
+    }
+    .brand-row { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+    .brand h1 { margin: 0; font-size: 1.25rem; letter-spacing: .04em; color: var(--gold-2); }
+    .brand p { margin: 2px 0 0; font-size: .82rem; opacity: .9; }
+    .user-chip { font-size: .78rem; text-align: right; }
+    .user-chip .btns { display: flex; gap: 6px; justify-content: flex-end; margin-top: 6px; }
+    .nav { display: flex; gap: 6px; overflow-x: auto; margin-top: 12px; padding-bottom: 2px; }
+    .nav button {
+      border: 0; background: rgba(255,255,255,.1); color: #fff;
+      padding: 8px 12px; border-radius: 999px; white-space: nowrap;
+    }
+    .nav button.active { background: var(--gold); color: var(--navy); font-weight: 700; }
+    .banner {
+      display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap;
+      background: #fff3cd; color: #5b4300; border-bottom: 1px solid #f0d98a; padding: 8px 14px; font-size: .85rem;
+    }
+    main { padding: 14px 14px 170px; max-width: 1100px; margin: 0 auto; }
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 14px;
+    }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .field { flex: 1 1 160px; display: flex; flex-direction: column; gap: 4px; }
+    .field.grow { flex: 2 1 240px; }
+    label { font-size: .75rem; color: var(--muted); font-weight: 600; }
+    label.check { display: flex; gap: 8px; align-items: center; font-size: .85rem; margin-top: 10px; color: var(--ink); }
+    input, select, textarea {
+      border: 1px solid #d9d0bc; border-radius: 10px; padding: 9px 10px; background: #fff;
+    }
+    textarea { min-height: 64px; resize: vertical; }
+    .btn {
+      border: 0; border-radius: 10px; padding: 10px 14px; font-weight: 700;
+      background: var(--navy); color: #fff;
+    }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn.gold { background: var(--gold); color: var(--navy); }
+    .btn.red { background: var(--red); }
+    .btn.ghost { background: #efe8d8; color: var(--navy); }
+    .btn.ok { background: var(--ok); }
+    .btn.small { padding: 6px 10px; font-size: .82rem; }
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+    .search { width: 100%; margin-bottom: 10px; }
+    .cat { border: 1px solid var(--line); border-radius: 12px; margin: 10px 0; overflow: hidden; background: #fff; }
+    .cat-h {
+      width: 100%; text-align: left; background: #f7f1e4; border: 0;
+      padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;
+      font-weight: 700;
+    }
+    .cat-h span.tag { font-size: .7rem; background: var(--red); color: #fff; border-radius: 999px; padding: 2px 8px; font-weight: 600; }
+    .prod {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between;
+      padding: 8px 12px; border-top: 1px solid var(--line);
+    }
+    .prod .info { flex: 1 1 160px; min-width: 0; }
+    .prod .sno {
+      flex: 0 0 3rem; min-width: 3rem; font-weight: 800; color: var(--navy); font-size: .85rem;
+      background: #f7f1e4; border-radius: 8px; padding: 6px 4px; text-align: center;
+    }
+    .prod .name { font-size: .92rem; }
+    .prod .meta { color: var(--muted); font-size: .75rem; }
+    .qty { display: flex; align-items: center; gap: 4px; }
+    .qty button { width: 32px; height: 32px; border: 0; border-radius: 8px; background: var(--navy); color: #fff; font-size: 1.1rem; }
+    .qty input { width: 58px; text-align: center; padding: 6px; }
+    .amt { font-weight: 700; min-width: 72px; text-align: right; }
+
+    /* Fixed bottom bar (totals + actions) */
+    #bill-footer {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 15;
+      background: var(--navy); color: #fff;
+      padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+      box-shadow: 0 -6px 20px rgba(0,0,0,.25);
+    }
+    .totals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; max-width: 1100px; margin: 0 auto; text-align: center; font-size: .72rem; }
+    .totals b { display: block; font-size: .92rem; }
+    .totals strong { display: block; color: var(--gold-2); font-size: 1.05rem; }
+    .actions-bar { display: flex; gap: 6px; overflow-x: auto; max-width: 1100px; margin: 8px auto 0; }
+    .actions-bar .btn { flex: 0 0 auto; padding: 8px 12px; font-size: .85rem; }
+
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    th, td { padding: 8px; border-bottom: 1px solid var(--line); text-align: left; }
+    th { font-size: .75rem; color: var(--muted); }
+    tr.clickable { cursor: pointer; }
+    tr.clickable:hover { background: #fbf6ea; }
+
+    .toast {
+      position: fixed; left: 50%; top: calc(12px + env(safe-area-inset-top, 0px)); transform: translateX(-50%);
+      background: var(--ok); color: #fff; padding: 10px 16px; border-radius: 999px;
+      z-index: 90; box-shadow: var(--shadow); max-width: 92vw; text-align: center;
+    }
+    .modal-bg {
+      position: fixed; inset: 0; background: rgba(20,16,40,.55); z-index: 40;
+      display: grid; place-items: center; padding: 16px;
+    }
+    #dialog { z-index: 80; }
+    .modal { background: #fff; width: min(860px, 100%); max-height: 90vh; overflow: auto; border-radius: 16px; padding: 16px; }
+    .modal.small-modal { width: min(420px, 100%); }
+    .badge { display: inline-block; background: #efe8d8; border-radius: 999px; padding: 2px 8px; font-size: .72rem; }
+    .ribbon { background: #e7f6ee; color: var(--ok); border-radius: 10px; padding: 8px 12px; font-weight: 700; margin-bottom: 10px; }
+    .invoice { background: #fff; color: #111; padding: 18px; border: 2px solid var(--navy); }
+    .invoice-head { display: flex; justify-content: space-between; gap: 12px; border-bottom: 3px solid var(--gold); padding-bottom: 10px; }
+    .invoice h2 { margin: 0; color: var(--navy); }
+    .invoice table { margin-top: 10px; }
+    .invoice th { background: var(--navy); color: #fff; }
+    .muted { color: var(--muted); }
+    .danger { color: var(--red); }
+
+    /* ---------- Login ---------- */
+    .login {
+      position: relative; min-height: 100vh; min-height: 100dvh;
+      display: grid; place-items: center; overflow: auto;
+      padding: calc(20px + env(safe-area-inset-top, 0px)) 16px calc(20px + env(safe-area-inset-bottom, 0px));
+      background:
+        radial-gradient(1100px 600px at 15% -10%, #5a2a6b 0%, transparent 60%),
+        radial-gradient(900px 520px at 100% 105%, #7a1f1f 0%, transparent 55%),
+        linear-gradient(160deg, #141742, #1b1f4b 55%, #2a1638);
+    }
+    #fx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .login-shell { position: relative; z-index: 1; width: min(940px, 100%); display: grid; grid-template-columns: 1fr; gap: 22px; align-items: center; }
+    @media (min-width: 820px) { .login-shell { grid-template-columns: 1.05fr .95fr; gap: 56px; } }
+    .login-brand { color: #fff; text-align: center; }
+    @media (min-width: 820px) { .login-brand { text-align: left; } .login-brand .logo { margin-left: 0; } }
+    .logo {
+      width: 68px; height: 68px; border-radius: 20px; display: grid; place-items: center; margin: 0 auto 14px;
+      background: linear-gradient(135deg, #ead48a, #c9a227); box-shadow: 0 10px 30px rgba(201,162,39,.4);
+    }
+    .login-brand h1 { margin: 0; font-size: clamp(1.7rem, 5vw, 2.5rem); color: var(--gold-2); letter-spacing: .06em; }
+    .login-brand .greet { margin-top: 6px; font-size: 1.1rem; opacity: .95; }
+    .login-brand p { margin: 6px 0 0; opacity: .8; font-size: .9rem; }
+    .login-panel {
+      background: rgba(255,255,255,.97); border-radius: 26px; padding: 20px 18px 18px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.45);
+    }
+    .pane-title { margin: 0 0 4px; color: var(--navy); font-size: 1.15rem; }
+    .who-label { text-align: center; font-size: .78rem; color: var(--muted); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .user-tiles { display: flex; gap: 10px; overflow-x: auto; padding: 10px 4px 8px; justify-content: safe center; }
+    .utile {
+      flex: 0 0 auto; min-width: 88px; border: 2px solid transparent; background: #f5efe0; border-radius: 16px;
+      padding: 10px 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--ink);
+      transition: transform .12s, border-color .12s, background .12s;
+    }
+    .utile:active { transform: scale(.96); }
+    .utile.sel { border-color: var(--gold); background: #fff7dc; box-shadow: 0 6px 16px rgba(201,162,39,.25); }
+    .avatar {
+      width: 46px; height: 46px; border-radius: 50%; background: var(--navy); color: var(--gold-2);
+      display: grid; place-items: center; font-weight: 800; font-size: 1.15rem;
+    }
+    .avatar.admin { background: linear-gradient(135deg, #7a1f1f, #3a1d4a); }
+    .uname { font-weight: 700; font-size: .85rem; max-width: 96px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .urole { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .dots { display: flex; justify-content: center; gap: 12px; margin: 12px 0 6px; min-height: 18px; }
+    .dots i { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #cbbf9f; transition: all .14s; }
+    .dots i.on { background: var(--navy); border-color: var(--navy); transform: scale(1.12); }
+    .dots.shake { animation: shake .42s; }
+    @keyframes shake { 10%,90% { transform: translateX(-2px); } 20%,80% { transform: translateX(4px); } 30%,50%,70% { transform: translateX(-7px); } 40%,60% { transform: translateX(7px); } }
+    .pin-msg { text-align: center; min-height: 1.4em; font-size: .85rem; color: var(--muted); margin: 0; }
+    .pin-msg.err { color: var(--red); font-weight: 600; }
+    .pin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 272px; margin: 12px auto 4px; }
+    .pin-grid button {
+      aspect-ratio: 1; border: 0; border-radius: 50%; font-size: 1.45rem; font-weight: 600;
+      background: #f3ecd9; color: var(--navy); transition: transform .08s, background .12s;
+    }
+    .pin-grid button:active { transform: scale(.92); background: #e8dcc0; }
+    .pin-grid button:disabled { opacity: .45; }
+    .pin-grid .k-ok { background: var(--gold); }
+    .pin-grid .k-back { background: transparent; font-size: 1.3rem; }
+    .pin-text { margin-top: 12px; }
+    .pin-text-row { display: flex; gap: 8px; }
+    .pin-text-row input { flex: 1; min-width: 0; font-size: 1.15rem; text-align: center; letter-spacing: .12em; padding: 12px 10px; }
+    .link-btn { display: block; margin: 10px auto 0; border: 0; background: none; color: var(--navy-2); text-decoration: underline; font-size: .85rem; }
+    .code-box {
+      font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 1.35rem; letter-spacing: .14em; text-align: center;
+      background: #fff8e1; border: 2px dashed var(--gold); border-radius: 12px; padding: 10px; color: var(--navy); font-weight: 700;
+    }
+    @media (prefers-reduced-motion: reduce) { .dots.shake { animation: none; } * { transition: none !important; } }
+
+    @page { size: A4; margin: 12mm; }
+    @media print {
+      body { background: #fff; }
+      .app-header, .nav, main, #bill-footer, .banner, .toast, .modal-bg, .login { display: none !important; }
+      #print-root { display: block !important; }
+      #print-root .invoice { border: 0; }
+    }
+    #print-root { display: none; }
+  </style>
+</head>
+<body>
+  <!-- ================= LOGIN ================= -->
+  <div id="login-screen" class="login">
+    <canvas id="fx"></canvas>
+    <div class="login-shell">
+      <div class="login-brand">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="42" height="42"><g stroke="#1b1f4b" stroke-width="3" stroke-linecap="round"><path d="M24 5v9M24 34v9M5 24h9M34 24h9M11 11l6 6M31 31l6 6M37 11l-6 6M17 31l-6 6"/></g><circle cx="24" cy="24" r="4.5" fill="#1b1f4b"/></svg>
+        </div>
+        <h1 id="login-title">V.A.V. VELU</h1>
+        <div class="greet">வணக்கம் · Welcome</div>
+        <p id="login-sub"></p>
+        <p id="login-phones"></p>
+      </div>
+
+      <div class="login-panel">
+        <!-- PIN pane -->
+        <div id="pane-pin">
+          <div class="who-label">Who is billing?</div>
+          <div class="user-tiles" id="user-tiles"></div>
+          <div class="dots" id="pin-dots" aria-label="PIN entered"></div>
+          <p class="pin-msg" id="pin-msg"></p>
+          <div class="pin-grid" id="pin-pad"></div>
+          <div class="pin-text hidden" id="pin-text-wrap">
+            <div class="pin-text-row">
+              <input id="pin-text" type="password" maxlength="12" placeholder="PIN or password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
+              <button type="button" class="btn ghost" id="pin-eye" aria-label="Show or hide">Show</button>
+            </div>
+            <button type="button" class="btn gold wide" id="pin-go" style="margin-top:10px">Log in</button>
+          </div>
+          <button type="button" class="link-btn" id="pin-mode">Use letter keyboard (ABC)</button>
+          <button type="button" class="link-btn hidden" id="btn-forgot">Forgot admin PIN?</button>
+        </div>
+
+        <!-- Recovery pane -->
+        <div id="pane-recover" class="hidden">
+          <h2 class="pane-title">Reset admin PIN</h2>
+          <p class="muted small" style="margin-top:0">Enter the recovery code you wrote down during setup. Bills and products are not touched.</p>
+          <div class="field" style="margin-top:12px"><label>Recovery code</label><input id="recover-code" autocomplete="off" autocapitalize="characters" /></div>
+          <div class="row" style="margin-top:8px">
+            <div class="field"><label>New PIN (4–12 letters or digits)</label><input id="recover-pin" type="password" maxlength="12" autocapitalize="off" autocomplete="new-password" /></div>
+            <div class="field"><label>Confirm PIN</label><input id="recover-pin2" type="password" maxlength="12" autocapitalize="off" autocomplete="new-password" /></div>
+          </div>
+          <p class="pin-msg err" id="recover-err"></p>
+          <div class="toolbar">
+            <button type="button" class="btn gold" id="btn-recover">Reset PIN</button>
+            <button type="button" class="btn ghost" id="btn-recover-cancel">Back</button>
+          </div>
+        </div>
+
+        <!-- First-run setup pane -->
+        <div id="pane-setup" class="hidden"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= APP ================= -->
+  <div id="app-screen" class="hidden">
+    <header class="app-header">
+      <div class="brand-row">
+        <div class="brand">
+          <h1 id="shop-name">V.A.V. VELU</h1>
+          <p id="shop-sub"></p>
+          <p id="shop-phones"></p>
+        </div>
+        <div class="user-chip">
+          <div id="who"></div>
+          <div class="btns">
+            <button class="btn small ghost" id="btn-mypin">Change PIN</button>
+            <button class="btn small ghost" id="btn-logout">Logout</button>
+          </div>
+        </div>
+      </div>
+      <nav class="nav" id="nav"></nav>
+    </header>
+    <div id="banner" class="banner hidden"></div>
+    <main id="view"></main>
+    <div id="bill-footer" class="hidden"></div>
+  </div>
+  <div id="print-root"></div>
+  <div id="toast" class="toast hidden"></div>
+  <div id="modal" class="modal-bg hidden"></div>
+  <div id="dialog" class="modal-bg hidden"></div>
+
+  <script>
+  "use strict";
+  const STORE_KEY = "vav-billing-v1";
+  const $ = id => document.getElementById(id);
+  const uid = () => "id-" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+  const FONT_STACK = '"Noto Sans Tamil","Nirmala UI","Latha","Segoe UI",Tahoma,sans-serif';
+  const SHIELD_SVG = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>';
+
+  /* ---------- SHA-256 (pure JS, works on http/file too) ---------- */
+  const SHA_K = [
+    0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+    0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+    0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+    0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+    0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+    0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+    0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+    0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
+  ];
+  function sha256(str) {
+    const bytes = new TextEncoder().encode(str);
+    const l = bytes.length;
+    const padLen = ((l + 9 + 63) >> 6) << 6;
+    const buf = new Uint8Array(padLen);
+    buf.set(bytes); buf[l] = 0x80;
+    const dv = new DataView(buf.buffer);
+    dv.setUint32(padLen - 4, (l * 8) >>> 0);
+    dv.setUint32(padLen - 8, Math.floor(l * 8 / 4294967296));
+    let h0 = 0x6a09e667, h1 = 0xbb67ae85, h2 = 0x3c6ef372, h3 = 0xa54ff53a,
+        h4 = 0x510e527f, h5 = 0x9b05688c, h6 = 0x1f83d9ab, h7 = 0x5be0cd19;
+    const w = new Int32Array(64);
+    for (let i = 0; i < padLen; i += 64) {
+      for (let t = 0; t < 16; t++) w[t] = dv.getUint32(i + t * 4);
+      for (let t = 16; t < 64; t++) {
+        const a = w[t - 15], b = w[t - 2];
+        const s0 = ((a >>> 7) | (a << 25)) ^ ((a >>> 18) | (a << 14)) ^ (a >>> 3);
+        const s1 = ((b >>> 17) | (b << 15)) ^ ((b >>> 19) | (b << 13)) ^ (b >>> 10);
+        w[t] = (w[t - 16] + s0 + w[t - 7] + s1) | 0;
+      }
+      let a = h0, b = h1, c = h2, d = h3, e = h4, f = h5, g = h6, h = h7;
+      for (let t = 0; t < 64; t++) {
+        const S1 = ((e >>> 6) | (e << 26)) ^ ((e >>> 11) | (e << 21)) ^ ((e >>> 25) | (e << 7));
+        const ch = (e & f) ^ (~e & g);
+        const t1 = (h + S1 + ch + SHA_K[t] + w[t]) | 0;
+        const S0 = ((a >>> 2) | (a << 30)) ^ ((a >>> 13) | (a << 19)) ^ ((a >>> 22) | (a << 10));
+        const mj = (a & b) ^ (a & c) ^ (b & c);
+        const t2 = (S0 + mj) | 0;
+        h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0;
+      }
+      h0 = (h0 + a) | 0; h1 = (h1 + b) | 0; h2 = (h2 + c) | 0; h3 = (h3 + d) | 0;
+      h4 = (h4 + e) | 0; h5 = (h5 + f) | 0; h6 = (h6 + g) | 0; h7 = (h7 + h) | 0;
+    }
+    return [h0, h1, h2, h3, h4, h5, h6, h7].map(x => (x >>> 0).toString(16).padStart(8, "0")).join("");
+  }
+  function makeSalt() {
+    const a = new Uint8Array(16);
+    try { crypto.getRandomValues(a); } catch (e) { for (let i = 0; i < 16; i++) a[i] = Math.floor(Math.random() * 256); }
+    return Array.from(a, b => b.toString(16).padStart(2, "0")).join("");
+  }
+  function hashSecret(secret, salt) {
+    let x = salt + ":" + secret;
+    for (let i = 0; i < 2000; i++) x = sha256(x + salt);
+    return x;
+  }
+  function normCode(c) { return String(c || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); }
+  function genRecovery() {
+    const alpha = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    const a = new Uint8Array(8);
+    try { crypto.getRandomValues(a); } catch (e) { for (let i = 0; i < 8; i++) a[i] = Math.floor(Math.random() * 256); }
+    const s = Array.from(a, b => alpha[b % alpha.length]).join("");
+    return s.slice(0, 4) + "-" + s.slice(4);
+  }
+  const PIN_RE = /^[A-Za-z0-9]{4,12}$/;          // PIN may use letters and digits
+  const DEFAULT_RECOVERY = "VAVVAILI2026";           // default recovery code (change it in Settings)
+  const normPin = s => String(s ?? "").trim().toUpperCase();   // PINs are not case-sensitive
+  const pinHash = (pin, salt) => hashSecret(normPin(pin), salt);
+
+  /* ---------- Seed data ---------- */
+  const SEED_CATEGORIES = [
+    { name: "One Sound Crackers", noDiscount: false },
+    { name: "Two Sound Crackers", noDiscount: false },
+    { name: "Flower Pots", noDiscount: false },
+    { name: "Ground Chakkar", noDiscount: false },
+    { name: "Twinkling Stars & Pencils", noDiscount: false },
+    { name: "Rockets", noDiscount: false },
+    { name: "Bombs", noDiscount: false },
+    { name: "Bijili Crackers", noDiscount: false },
+    { name: "Fountain & Varieties", noDiscount: false },
+    { name: "Fancy Crackers", noDiscount: false },
+    { name: "Wow Collection", noDiscount: false },
+    { name: "Sparklers", noDiscount: false },
+    { name: "Colour Matches & Novelties", noDiscount: false },
+    { name: "Gift Boxes", noDiscount: true }
+  ];
+
+const P = (sno, name, price, unit, cat) => ({ id: "p" + sno, sno, name, price, unit, category: cat });
+
+  const SEED_PRODUCTS = [
+    P(1,"3/4\" Deluxe Lakshmi / Jallika (5 Pcs)",80,"Pkt","One Sound Crackers"),
+    P(2,"2\" Kuruvi (5 Pcs)",110,"Pkt","One Sound Crackers"),
+    P(3,"3 1/2\" Lakshmi (5 Pcs)",190,"Pkt","One Sound Crackers"),
+    P(4,"4\" Lakshmi (5 Pcs)",250,"Pkt","One Sound Crackers"),
+    P(5,"4\" Deluxe Lakshmi (5 Pcs)",300,"Pkt","One Sound Crackers"),
+    P(6,"4\" Gold Lakshmi (5 Pcs)",430,"Pkt","One Sound Crackers"),
+    P(7,"5\" Deluxe Lakshmi (5 Pcs)",660,"Pkt","One Sound Crackers"),
+    P(8,"Two Sound Crackers (5 Pcs)",900,"Pkt","Two Sound Crackers"),
+    P(9,"Flower Pots Special (10 Pcs)",800,"Box","Flower Pots"),
+    P(10,"Flower Pots Ashoka (10 Pcs)",1200,"Box","Flower Pots"),
+    P(11,"Flower Pots Deluxe (5 Pcs)",2200,"Box","Flower Pots"),
+    P(12,"Flower Pots Colour Koti Dlx (10 Pcs)",1900,"Box","Flower Pots"),
+    P(13,"Ground Chakkar Big (25 Pcs)",800,"Box","Ground Chakkar"),
+    P(14,"Ground Chakkar Big (10 Pcs)",400,"Box","Ground Chakkar"),
+    P(15,"Ground Chakkar Special (10 Pcs)",800,"Box","Ground Chakkar"),
+    P(16,"Ground Chakkar Deluxe (10 Pcs)",1400,"Box","Ground Chakkar"),
+    P(17,"Ground Chakkar Disco Wheel (5 Pcs)",1200,"Box","Ground Chakkar"),
+    P(18,"Wire Chakkar (10 Pcs)",1600,"Box","Ground Chakkar"),
+    P(19,"Moon Wheel (10 Pcs)",2000,"Box","Ground Chakkar"),
+    P(20,"1/2\" Twinkling Star (10 Pcs)",250,"Box","Twinkling Stars & Pencils"),
+    P(21,"1\" Twinkling Star (10 Pcs)",350,"Box","Twinkling Stars & Pencils"),
+    P(22,"4\" Twinkling Star (10 Pcs)",700,"Box","Twinkling Stars & Pencils"),
+    P(23,"10\" Pencil (10 Pcs)",400,"Box","Twinkling Stars & Pencils"),
+    P(24,"12\" Pencil (10 Pcs)",530,"Box","Twinkling Stars & Pencils"),
+    P(25,"15\" Pencil (10 Pcs)",800,"Box","Twinkling Stars & Pencils"),
+    P(26,"18\" Pencil (10 Pcs)",900,"Box","Twinkling Stars & Pencils"),
+    P(27,"Rocket Bomb / Colour Rocket (10 Pcs)",700,"Box","Rockets"),
+    P(28,"Whistling Rocket (10 Pcs)",1800,"Box","Rockets"),
+    P(29,"Lunik Rocket (10 Pcs)",1400,"Box","Rockets"),
+    P(30,"2 Sound Rocket (10 Pcs)",1600,"Box","Rockets"),
+    P(31,"3 Sound Rocket (10 Pcs)",1800,"Box","Rockets"),
+    P(32,"Bullet Bomb / Super Bullet (10 Pcs)",300,"Box","Bombs"),
+    P(33,"Hydro Bomb (10 Pcs)",700,"Box","Bombs"),
+    P(34,"King Kong Bomb (10 Pcs)",900,"Box","Bombs"),
+    P(35,"Classic Bomb (10 Pcs)",1200,"Box","Bombs"),
+    P(36,"Dinosaur Bomb (10 Pcs)",2200,"Box","Bombs"),
+    P(37,"Digital Bomb (10 Pcs)",2500,"Box","Bombs"),
+    P(38,"1/4 Kg Paper Bomb (1 Pc)",450,"Box","Bombs"),
+    P(39,"1/2 Kg Paper Bomb (1 Pc)",900,"Box","Bombs"),
+    P(40,"1 Kg Paper Bomb (1 Pc)",1600,"Box","Bombs"),
+    P(41,"555 Bomb (10 Pcs)",1800,"Box","Bombs"),
+    P(42,"Red Bijili (100 Pcs)",330,"Box","Bijili Crackers"),
+    P(43,"Stripped Bijili (100 Pcs)",350,"Box","Bijili Crackers"),
+    P(44,"Butterfly (10 Pcs)",900,"Box","Fountain & Varieties"),
+    P(45,"Mega Siren (3 Pcs)",1800,"Box","Fountain & Varieties"),
+    P(46,"Shower (5 Pcs)",1200,"Box","Fountain & Varieties"),
+    P(47,"Tri Colour Fountain (5 Pcs)",2500,"Box","Fountain & Varieties"),
+    P(48,"Kit Kat / Chit Phut / TitTak (10 Pcs)",400,"Pkt","Fountain & Varieties"),
+    P(49,"Photo Flash (5 Pcs)",700,"Pkt","Fountain & Varieties"),
+    P(50,"Peacock (1 Pc)",1600,"Box","Fountain & Varieties"),
+    P(51,"Helicopter (5 Pcs)",1000,"Box","Fountain & Varieties"),
+    P(52,"Drone (5 Pcs)",1600,"Box","Fountain & Varieties"),
+    P(53,"Tin Beer (1 Pc)",1200,"Box","Fountain & Varieties"),
+    P(54,"Peacock Feather (5 Pcs)",1000,"Box","Fountain & Varieties"),
+    P(55,"Crorepati / Jackpot (2 Pcs)",2200,"Box","Fountain & Varieties"),
+    P(56,"Golden Rain (5 Pcs)",1000,"Box","Fountain & Varieties"),
+    P(57,"Rainbow Smoke (3 Pcs)",1500,"Box","Fountain & Varieties"),
+    P(58,"Bambaram (10 Pcs)",1200,"Box","Fountain & Varieties"),
+    P(59,"Black Money (5 Pcs)",2200,"Box","Fountain & Varieties"),
+    P(60,"Lollipop Stick (5 Pcs)",1700,"Box","Fountain & Varieties"),
+    P(61,"Pada Peacock (1 Pc)",4000,"Box","Fountain & Varieties"),
+    P(62,"90 Watts (3 Pcs)",1200,"Box","Fancy Crackers"),
+    P(63,"Chotta Fancy",400,"Box","Fancy Crackers"),
+    P(64,"2\" Pipe (5 Varieties) (1 Pc)",1200,"Box","Fancy Crackers"),
+    P(65,"2\" Pipe (3 Pcs)",2800,"Box","Fancy Crackers"),
+    P(66,"3\" Pipe (6 Varieties) (1 Pc)",2400,"Box","Fancy Crackers"),
+    P(67,"3 1/2\" Pipe (5 Varieties) (1 Pc)",3000,"Box","Fancy Crackers"),
+    P(68,"4\" Pipe (5 Varieties) (1 Pc)",3500,"Box","Fancy Crackers"),
+    P(69,"4\" Pipe (2 Pcs)",4000,"Box","Fancy Crackers"),
+    P(70,"4\" 7 Steps (1 Pc)",9000,"Box","Fancy Crackers"),
+    P(71,"4\" 12 Steps (1 Pc)",4300,"Box","Fancy Crackers"),
+    P(72,"4\" Pipe Niagara Falls Spl (1 Pc)",5300,"Box","Fancy Crackers"),
+    P(73,"5\" Pipe Orange (1 Pc)",5300,"Box","Fancy Crackers"),
+    P(74,"5\" Pipe Lemon (1 Pc)",5300,"Box","Fancy Crackers"),
+    P(75,"5\" Pipe Purple (1 Pc)",4800,"Box","Fancy Crackers"),
+    P(76,"5\" Pipe (2 Pcs)",10000,"Box","Fancy Crackers"),
+    P(77,"7 Shots Multicolour (5 Pcs)",1100,"Box","Fancy Crackers"),
+    P(78,"12 Shots Rider / Crackling",1400,"Box","Fancy Crackers"),
+    P(79,"25 Shots Rider / Crackling",2500,"Box","Fancy Crackers"),
+    P(80,"Cool Baby Cool (5 Pcs)",2000,"Box","Fancy Crackers"),
+    P(81,"30 Shots Multicolour",3500,"Box","Fancy Crackers"),
+    P(82,"60 Shots Multicolour",7000,"Box","Fancy Crackers"),
+    P(83,"120 Shots Multicolour",14000,"Box","Fancy Crackers"),
+    P(84,"Scarlet Saucer (5 Pcs) (Standard FW)",3550,"Box","Wow Collection"),
+    P(85,"Red & White Chakkars (10 Pcs) (Standard FW)",3550,"Box","Wow Collection"),
+    P(86,"Colour Burst (10 Pcs) (Standard FW)",1550,"Box","Wow Collection"),
+    P(87,"Whistling Dixie (5 Pcs) (Vadivel FW)",1550,"Box","Wow Collection"),
+    P(88,"Ring Ring (5 Pcs) (Vadivel FW)",880,"Box","Wow Collection"),
+    P(89,"Bad Boy (3 Pcs) (Vadivel FW)",2440,"Box","Wow Collection"),
+    P(90,"30 Shots Multicolour (Wow)",4000,"Box","Wow Collection"),
+    P(91,"60 Shots Multicolour (Wow)",8000,"Box","Wow Collection"),
+    P(92,"120 Shots Multicolour (Wow)",16000,"Box","Wow Collection"),
+    P(93,"240 Shots Multicolour (Wow)",32000,"Box","Wow Collection"),
+    P(94,"Money Penny (5 Pcs) (Standard FW)",2500,"Box","Wow Collection"),
+    P(95,"Sun Drops (5 Pcs) (Standard FW)",3200,"Box","Wow Collection"),
+    P(96,"Twin Spin (5 Pcs) (Standard FW)",3200,"Box","Wow Collection"),
+    P(97,"Autumn Rain (1 Pc) (Vadivel FW)",2200,"Box","Wow Collection"),
+    P(98,"Winter Rain (1 Pc) (Vadivel FW)",2500,"Box","Wow Collection"),
+    P(99,"Rangoon (2 Pcs) (Ajantha FW)",3350,"Box","Wow Collection"),
+    P(100,"Lemon Tree (1 Pc) (Ayyan FW)",1450,"Box","Wow Collection"),
+    P(101,"Cocktail (10 Pcs) (Ayyan FW)",650,"Box","Wow Collection"),
+    P(102,"Jadugar (5 Pcs) (Ayyan FW)",3350,"Box","Wow Collection"),
+    P(103,"ManoRajan (5 Pcs) (Ayyan FW)",3350,"Box","Wow Collection"),
+    P(104,"Dix Pots (5 Pcs)",2500,"Box","Wow Collection"),
+    P(105,"Scooby-Doo (5 Pcs) (Vadivel FW)",1750,"Box","Wow Collection"),
+    P(106,"Dexter (5 Pcs) (Vadivel FW)",1750,"Box","Wow Collection"),
+    P(107,"Popeye (5 Pcs) (Vadivel FW)",1750,"Box","Wow Collection"),
+    P(108,"Power Puff Girls (5 Pcs) (Vadivel FW)",1750,"Box","Wow Collection"),
+    P(109,"Recycle (5 Pcs) (Vadivel FW)",1750,"Box","Wow Collection"),
+    P(110,"Fire Egg (2 Pcs) (Vadivel FW)",1750,"Box","Wow Collection"),
+    P(111,"Magical Sword (2 Pcs) (Ajantha FW)",1450,"Box","Wow Collection"),
+    P(112,"Galaxy Sword (2 Pcs) (Ajantha FW)",1650,"Box","Wow Collection"),
+    P(113,"Mittco (2 Pcs) (Ajantha FW)",1650,"Box","Wow Collection"),
+    P(114,"Tropical Mushroom (1 Pc) (Ajantha FW)",1650,"Box","Wow Collection"),
+    P(115,"Smiling Elephant (1 Pc) (Ajantha FW)",1650,"Box","Wow Collection"),
+    P(116,"Lucky Lion (1 Pc) (Ajantha FW)",1650,"Box","Wow Collection"),
+    P(117,"Kit Kat Red (5 Pcs)",2555,"Box","Wow Collection"),
+    P(118,"Tic Tac Mint (5 Pcs)",2200,"Box","Wow Collection"),
+    P(119,"Milky Bar White (5 Pcs)",2200,"Box","Wow Collection"),
+    P(120,"5 Star Gold (5 Pcs)",2450,"Box","Wow Collection"),
+    P(121,"Dairy Milk (5 Pcs)",1700,"Box","Wow Collection"),
+    P(122,"Germs Colour Mix (5 Pcs)",1700,"Box","Wow Collection"),
+    P(123,"Karaoke Night (1 Pc)",1700,"Box","Wow Collection"),
+    P(124,"Jazz Music (1 Pc)",1700,"Box","Wow Collection"),
+    P(125,"Dr. Pepper (1 Pc)",1700,"Box","Wow Collection"),
+    P(126,"Big Bang (1 Pc)",1700,"Box","Wow Collection"),
+    P(127,"Red Apple (5 Pcs)",2555,"Box","Wow Collection"),
+    P(128,"Carnival Fun Fair (5 Pcs)",2200,"Box","Wow Collection"),
+    P(129,"Mr. Big (5 Pcs)",2200,"Box","Wow Collection"),
+    P(130,"Tooty Frooty (5 Pcs)",2450,"Box","Wow Collection"),
+    P(131,"Bingo Music (5 Pcs)",1700,"Box","Wow Collection"),
+    P(132,"Party Time (5 Pcs)",1700,"Box","Wow Collection"),
+    P(133,"Kulfi (3 Pcs)",1700,"Box","Wow Collection"),
+    P(134,"Hot Cone (2 Pcs)",1700,"Box","Wow Collection"),
+    P(135,"King Version (1 Pc)",1700,"Box","Wow Collection"),
+    P(136,"Cylinder Smoke (2 Pcs)",1700,"Box","Wow Collection"),
+    P(137,"7 Cm Electric Sparklers",90,"Box","Sparklers"),
+    P(138,"7 Cm Colour Sparklers",110,"Box","Sparklers"),
+    P(139,"7 Cm Green Sparklers",130,"Box","Sparklers"),
+    P(140,"10 Cm Electric Sparklers",180,"Box","Sparklers"),
+    P(141,"10 Cm Colour Sparklers",210,"Box","Sparklers"),
+    P(142,"10 Cm Green Sparklers",240,"Box","Sparklers"),
+    P(143,"12 Cm Electric Sparklers",270,"Box","Sparklers"),
+    P(144,"12 Cm Colour Sparklers",300,"Box","Sparklers"),
+    P(145,"12 Cm Green Sparklers",340,"Box","Sparklers"),
+    P(146,"15 Cm Electric Sparklers",430,"Box","Sparklers"),
+    P(147,"15 Cm Colour Sparklers",450,"Box","Sparklers"),
+    P(148,"15 Cm Green Sparklers",470,"Box","Sparklers"),
+    P(149,"30 Cm Electric Sparklers",430,"Box","Sparklers"),
+    P(150,"30 Cm Colour Sparklers",450,"Box","Sparklers"),
+    P(151,"30 Cm Green Sparklers",470,"Box","Sparklers"),
+    P(152,"50 Cm Electric Sparklers",1600,"Box","Sparklers"),
+    P(153,"50 Cm Colour Sparklers",1800,"Box","Sparklers"),
+    P(154,"Rotating Umbrella Sparklers",2000,"Box","Sparklers"),
+    P(155,"Colour Matches",330,"Box","Colour Matches & Novelties"),
+    P(156,"Colour Matches (Deluxe)",400,"Box","Colour Matches & Novelties"),
+    P(157,"Colour Matches 10 in 1 (Big)",450,"Box","Colour Matches & Novelties"),
+    P(158,"Hunter Gun (with Ring Caps)",530,"Box","Colour Matches & Novelties"),
+    P(159,"Snake Serpent (Big)",830,"Box","Colour Matches & Novelties"),
+    P(160,"Electric Stone / Magic Pops",100,"Box","Colour Matches & Novelties"),
+    P(161,"Cartoon (25 Pcs)",700,"Box","Colour Matches & Novelties"),
+    P(162,"Darling Pack 20 Items",1500,"Box","Gift Boxes"),
+    P(163,"Family Pack 25 Items",2000,"Box","Gift Boxes"),
+    P(164,"Golden Pack 30 Items",2500,"Box","Gift Boxes"),
+    P(165,"V.I.P Pack 35 Items",1500,"Box","Gift Boxes"),
+    P(166,"Premium Pack 42 Items",1000,"Box","Gift Boxes"),
+    P(167,"Diwali Special Pack 50 Items",1000,"Box","Gift Boxes")
+  ];
+
+
+  /* ---------- State ---------- */
+  const defaultState = () => ({
+    v: 2,
+    settings: {
+      companyName: "V.A.V. VELU",
+      subtitle: "Crackers & Fireworks • Price List 2026",
+      phones: ["99521 08746", "99872 39649", "88798 16609", "90474 67300"],
+      address: "",
+      deviceCode: "",
+      idleMinutes: 15,
+      recoveryHash: "",
+      recoverySalt: "",
+      recoveryMustChange: false,
+      lastBackup: 0
+    },
+    categories: SEED_CATEGORIES.map(c => ({ ...c })),
+    products: SEED_PRODUCTS.map(p => ({ ...p })),
+    users: [],
+    bills: [],
+    trash: [],
+    nextSerial: 1,
+    security: { fails: 0, lockUntil: 0 },
+    ui: { lastUser: "", letterMode: false }
+  });
+
+  // Turns any stored/imported object into a valid state; also upgrades old plain-text PINs.
+  function normalizeState(parsed) {
+    const def = defaultState();
+    const state = {
+      ...def, ...parsed,
+      settings: { ...def.settings, ...(parsed.settings || {}) },
+      security: { ...def.security, ...(parsed.security || {}) },
+      ui: { ...def.ui, ...(parsed.ui || {}) }
+    };
+    ["categories", "products", "users", "bills", "trash"].forEach(k => { if (!Array.isArray(state[k])) state[k] = def[k]; });
+    state.nextSerial = Number(state.nextSerial) || 1;
+    delete state.audit;
+    let changed = false;
+    state.users.forEach(u => {
+      if (u.pin !== undefined) {
+        if (u.role === "admin" && String(u.pin) === "1234") u.mustChange = true;
+        u.salt = makeSalt();
+        u.hash = pinHash(u.pin, u.salt);
+        delete u.pin;
+        changed = true;
+      }
+    });
+    if (state.settings.recoveryCode !== undefined) {
+      const oldRaw = normCode(state.settings.recoveryCode);
+      const old = oldRaw === "VELU2026" ? normCode(DEFAULT_RECOVERY) : oldRaw;
+      state.settings.recoverySalt = makeSalt();
+      state.settings.recoveryHash = hashSecret(old, state.settings.recoverySalt);
+      delete state.settings.recoveryCode;
+      changed = true;
+    }
+    // Devices upgraded earlier were told to replace the old default code; they now simply get the new default.
+    if (state.settings.recoveryMustChange) {
+      state.settings.recoverySalt = makeSalt();
+      state.settings.recoveryHash = hashSecret(normCode(DEFAULT_RECOVERY), state.settings.recoverySalt);
+      state.settings.recoveryMustChange = false;
+      changed = true;
+    }
+    return { state, changed };
+  }
+
+  let db = load();
+  let session = null;
+  let view = "bill";
+  let billDraft = emptyDraft();
+  let lastDraftUser = null;
+  let catOpen = {};
+  let historyStaffFilter = "all";
+  let pinBuf = "";
+  let selUserId = "";
+  let loginMode = "pin";
+  let lastActive = Date.now();
+
+  function load() {
+    let raw = null;
+    try {
+      raw = localStorage.getItem(STORE_KEY);
+      if (!raw) return defaultState();
+      const { state, changed } = normalizeState(JSON.parse(raw));
+      if (changed) { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }
+      return state;
+    } catch (e) {
+      // Never overwrite unreadable data: keep a copy first.
+      try { if (raw) localStorage.setItem(STORE_KEY + "-corrupt-" + Date.now(), raw); } catch (e2) {}
+      return defaultState();
+    }
+  }
+  function save() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(db)); } catch (e) { /* storage unavailable */ }
+  }
+
+  function emptyDraft() {
+    const d = new Date();
+    const p = n => String(n).padStart(2, "0");
+    const iso = d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+    return { customerName: "", phone: "", address: "", date: iso, discountPct: 90, qtys: {}, others: [], search: "" };
+  }
+
+  function toast(msg) {
+    const el = $("toast");
+    el.textContent = msg;
+    el.classList.remove("hidden");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => el.classList.add("hidden"), 2800);
+  }
+
+  function esc(s) {
+    return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+  function num(n) { const x = Number(n); return Number.isFinite(x) ? x : 0; }
+  function money(n) {
+    return "₹" + num(n).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function fmtDate(iso) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ""));
+    return m ? `${m[3]}-${m[2]}-${m[1]}` : String(iso || "");
+  }
+  function catNoDisc(name) {
+    const c = db.categories.find(x => x.name === name);
+    return !!(c && c.noDiscount);
+  }
+  function productById(id) { return db.products.find(p => p.id === id); }
+  const isAdmin = () => !!(session && session.role === "admin");
+
+  /* ---------- Dialogs (no window.confirm/prompt) ---------- */
+  function askConfirm(message, okLabel = "OK", danger = false) {
+    return new Promise(resolve => {
+      const d = $("dialog");
+      d.innerHTML = `<div class="modal small-modal">
+        <p style="margin:0 0 14px;font-size:1rem">${esc(message)}</p>
+        <div class="toolbar" style="justify-content:flex-end;margin-bottom:0">
+          <button class="btn ghost" data-r="0">Cancel</button>
+          <button class="btn ${danger ? "red" : "ok"}" data-r="1">${esc(okLabel)}</button>
+        </div></div>`;
+      d.classList.remove("hidden");
+      const done = v => { d.classList.add("hidden"); d.innerHTML = ""; d.onclick = null; resolve(v); };
+      d.querySelector('[data-r="0"]').onclick = () => done(false);
+      d.querySelector('[data-r="1"]').onclick = () => done(true);
+      d.onclick = e => { if (e.target === d) done(false); };
+    });
+  }
+
+  // fields: [{id,label,type,inputmode,value,maxlength}], opts: {okLabel,note,validate(values)->error|"",dismissable}
+  function formModal(title, fields, opts = {}) {
+    return new Promise(resolve => {
+      const { okLabel = "Save", note = "", validate = null, dismissable = true } = opts;
+      const d = $("dialog");
+      d.innerHTML = `<div class="modal small-modal">
+        <h3 style="margin:0 0 6px;color:var(--navy)">${esc(title)}</h3>
+        ${note ? `<p class="muted small" style="margin:0 0 10px">${esc(note)}</p>` : ""}
+        ${fields.map(f => `<div class="field" style="margin-bottom:10px"><label>${esc(f.label)}</label>
+          <input id="fm-${esc(f.id)}" type="${esc(f.type || "text")}" ${f.inputmode ? `inputmode="${esc(f.inputmode)}"` : ""}
+            ${f.maxlength ? `maxlength="${f.maxlength}"` : ""} value="${esc(f.value || "")}" autocomplete="off" /></div>`).join("")}
+        <p class="pin-msg err" id="fm-err" style="text-align:left"></p>
+        <div class="toolbar" style="justify-content:flex-end;margin-bottom:0">
+          ${dismissable ? `<button class="btn ghost" id="fm-cancel">Cancel</button>` : ""}
+          <button class="btn gold" id="fm-ok">${esc(okLabel)}</button>
+        </div></div>`;
+      d.classList.remove("hidden");
+      const done = v => { d.classList.add("hidden"); d.innerHTML = ""; d.onclick = null; resolve(v); };
+      const first = d.querySelector("input"); if (first) setTimeout(() => first.focus(), 30);
+      if (dismissable) {
+        $("fm-cancel").onclick = () => done(null);
+        d.onclick = e => { if (e.target === d) done(null); };
+      }
+      const submit = () => {
+        const vals = {};
+        fields.forEach(f => { vals[f.id] = $("fm-" + f.id).value; });
+        const err = validate ? validate(vals) : "";
+        if (err) { $("fm-err").textContent = err; return; }
+        done(vals);
+      };
+      $("fm-ok").onclick = submit;
+      d.querySelectorAll("input").forEach(i => i.onkeydown = e => { if (e.key === "Enter") submit(); });
+    });
+  }
+
+  /* ---------- Fireworks background for the login screen ---------- */
+  let fxRAF = 0, fxParts = [], fxLast = 0, fxNext = 0;
+  function fxResize() {
+    const c = $("fx"); if (!c) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    c.width = Math.floor(window.innerWidth * dpr); c.height = Math.floor(window.innerHeight * dpr);
+  }
+  function startFx() {
+    const c = $("fx");
+    if (!c || fxRAF) return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const ctx = c.getContext("2d");
+    if (!ctx) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    fxResize();
+    window.addEventListener("resize", fxResize);
+    const cols = ["#ffd76a", "#ff7a7a", "#7ad1ff", "#c39bff", "#7dffb0", "#ffb36b"];
+    const burst = () => {
+      const x = (0.12 + Math.random() * 0.76) * c.width, y = (0.08 + Math.random() * 0.5) * c.height;
+      const col = cols[(Math.random() * cols.length) | 0], n = 34 + ((Math.random() * 20) | 0);
+      for (let i = 0; i < n && fxParts.length < 420; i++) {
+        const a = (i / n) * Math.PI * 2 + Math.random() * 0.1, sp = (1 + Math.random() * 2.2) * dpr;
+        fxParts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1, col });
+      }
+    };
+    const frame = t => {
+      fxRAF = requestAnimationFrame(frame);
+      const dt = Math.min(40, t - (fxLast || t)); fxLast = t;
+      if (t > fxNext) { burst(); fxNext = t + 900 + Math.random() * 1300; }
+      ctx.clearRect(0, 0, c.width, c.height);
+      fxParts = fxParts.filter(p => p.life > 0);
+      for (const p of fxParts) {
+        p.x += p.vx * dt / 16; p.y += p.vy * dt / 16;
+        p.vx *= 0.987; p.vy = p.vy * 0.987 + 0.028 * dpr * dt / 16;
+        p.life -= dt / 1500;
+        ctx.globalAlpha = Math.max(0, p.life) * 0.9;
+        ctx.fillStyle = p.col;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 1.8 * dpr, 0, 6.3); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    };
+    fxRAF = requestAnimationFrame(frame);
+  }
+  function stopFx() {
+    if (fxRAF) cancelAnimationFrame(fxRAF);
+    fxRAF = 0; fxParts = []; fxLast = 0;
+    window.removeEventListener("resize", fxResize);
+  }
+
+  /* ---------- Login ---------- */
+  let lockTimer = 0;
+  const isLocked = () => (db.security.lockUntil || 0) > Date.now();
+  const orderedUsers = () => [...db.users].sort((a, b) => (a.role === "admin" ? 1 : 0) - (b.role === "admin" ? 1 : 0) || a.name.localeCompare(b.name));
+  const needsSetup = () => !db.users.some(u => u.role === "admin" && u.hash);
+  const initials = n => ([...String(n || "?").trim()][0] || "?").toUpperCase();
+
+  function showPane(name) {
+    loginMode = name;
+    $("pane-pin").classList.toggle("hidden", name !== "pin");
+    $("pane-recover").classList.toggle("hidden", name !== "recover");
+    $("pane-setup").classList.toggle("hidden", name !== "setup");
+  }
+
+  function initLogin() {
+    const pad = $("pin-pad");
+    pad.innerHTML = "";
+    [["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"], ["8"], ["9"], ["back", "⌫", "k-back"], ["0"], ["ok", "✓", "k-ok"]].forEach(([k, label, cls]) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.textContent = label || k; if (cls) b.className = cls;
+      b.setAttribute("aria-label", k === "back" ? "Backspace" : k === "ok" ? "Enter" : k);
+      b.onclick = () => onPin(k);
+      pad.appendChild(b);
+    });
+    $("btn-forgot").onclick = () => {
+      showPane("recover");
+      $("recover-code").value = ""; $("recover-pin").value = ""; $("recover-pin2").value = ""; $("recover-err").textContent = "";
+    };
+    $("btn-recover-cancel").onclick = () => { showPane("pin"); updatePinUI(); };
+    $("pin-mode").onclick = () => { db.ui.letterMode = !db.ui.letterMode; save(); pinBuf = ""; applyPinMode(); updatePinUI(); };
+    $("pin-eye").onclick = () => {
+      const i = $("pin-text"), show = i.type === "password";
+      i.type = show ? "text" : "password"; $("pin-eye").textContent = show ? "Hide" : "Show";
+    };
+    $("pin-text").oninput = e => { pinBuf = e.target.value.slice(0, 12); updatePinUI(); };
+    $("pin-text").onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); onPin("ok"); } };
+    $("pin-go").onclick = () => onPin("ok");
+    $("btn-recover").onclick = resetAdminPin;
+    document.addEventListener("keydown", e => {
+      if ($("login-screen").classList.contains("hidden") || loginMode !== "pin") return;
+      const t = e.target;
+      if (t && /INPUT|TEXTAREA|SELECT/.test(t.tagName)) return;
+      if (db.ui.letterMode) { $("pin-text").focus(); return; }
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (/^[A-Za-z0-9]$/.test(e.key)) onPin(e.key);
+      else if (e.key === "Backspace") onPin("back");
+      else if (e.key === "Enter") onPin("ok");
+      else if (e.key === "Escape") { pinBuf = ""; updatePinUI(); }
+    });
+  }
+
+  function renderLogin(notice) {
+    session = null;
+    clearInterval(lockTimer);
+    $("login-screen").classList.remove("hidden");
+    $("app-screen").classList.add("hidden");
+    $("bill-footer").classList.add("hidden");
+    $("banner").classList.add("hidden");
+    $("login-title").textContent = db.settings.companyName;
+    $("login-sub").textContent = db.settings.subtitle || "";
+    $("login-phones").textContent = (db.settings.phones || []).filter(Boolean).join("  •  ");
+    startFx();
+    if (needsSetup()) return renderSetup();
+    pinBuf = "";
+    if (!db.users.some(u => u.id === selUserId)) {
+      const pref = db.users.find(u => u.id === db.ui.lastUser);
+      selUserId = (pref || orderedUsers()[0]).id;
+    }
+    showPane("pin");
+    renderUserTiles();
+    applyPinMode();
+    updatePinUI(notice);
+  }
+
+  function renderUserTiles() {
+    const box = $("user-tiles");
+    box.innerHTML = orderedUsers().map(u => `
+      <button type="button" class="utile ${u.id === selUserId ? "sel" : ""}" data-id="${esc(u.id)}">
+        <span class="avatar ${u.role === "admin" ? "admin" : ""}">${u.role === "admin" ? SHIELD_SVG : esc(initials(u.name))}</span>
+        <span class="uname">${esc(u.name)}</span><span class="urole">${esc(u.role)}</span>
+      </button>`).join("");
+    box.querySelectorAll(".utile").forEach(b => b.onclick = () => {
+      selUserId = b.dataset.id; pinBuf = ""; renderUserTiles(); updatePinUI();
+    });
+    const u = db.users.find(x => x.id === selUserId);
+    $("btn-forgot").classList.toggle("hidden", !(u && u.role === "admin"));
+  }
+
+  function applyPinMode() {
+    const letters = !!db.ui.letterMode;
+    $("pin-pad").classList.toggle("hidden", letters);
+    $("pin-dots").classList.toggle("hidden", letters);
+    $("pin-text-wrap").classList.toggle("hidden", !letters);
+    $("pin-mode").textContent = letters ? "Use number keypad" : "Use letter keyboard (ABC)";
+    if (letters) setTimeout(() => { try { $("pin-text").focus(); } catch (e) {} }, 50);
+  }
+
+  function updatePinUI(msg, isErr) {
+    const n = Math.max(4, pinBuf.length);
+    $("pin-dots").innerHTML = Array.from({ length: n }, (_, i) => `<i class="${i < pinBuf.length ? "on" : ""}"></i>`).join("");
+    const m = $("pin-msg");
+    const u = db.users.find(x => x.id === selUserId);
+    const locked = isLocked();
+    if (locked) {
+      const s = Math.ceil((db.security.lockUntil - Date.now()) / 1000);
+      m.className = "pin-msg err"; m.textContent = `Too many wrong attempts. Try again in ${s}s`;
+      if (!lockTimer) lockTimer = setInterval(() => { if (!isLocked()) { clearInterval(lockTimer); lockTimer = 0; } updatePinUI(); }, 500);
+    } else {
+      m.className = "pin-msg" + (isErr ? " err" : "");
+      m.textContent = msg || (u ? `Enter PIN for ${u.name}` : "");
+    }
+    $("pin-pad").querySelectorAll("button").forEach(b => b.disabled = locked);
+    const pt = $("pin-text");
+    if (pt.value !== pinBuf) pt.value = pinBuf;
+    pt.disabled = locked; $("pin-go").disabled = locked;
+  }
+
+  function shakeDots() {
+    const d = $("pin-dots");
+    d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake");
+    if (navigator.vibrate) { try { navigator.vibrate(120); } catch (e) {} }
+  }
+
+  function onPin(k) {
+    if (isLocked()) return updatePinUI();
+    if (k === "back") pinBuf = pinBuf.slice(0, -1);
+    else if (k === "ok") return tryLogin();
+    else if (/^[A-Za-z0-9]$/.test(k) && pinBuf.length < 12) pinBuf += k;
+    updatePinUI();
+  }
+
+  function registerFail(what) {
+    db.security.fails = (db.security.fails || 0) + 1;
+    const f = db.security.fails;
+    const secs = f >= 10 ? 300 : f >= 8 ? 120 : f >= 5 ? 30 : 0;
+    db.security.lockUntil = secs ? Date.now() + secs * 1000 : 0;
+    save();
+    
+    return { f, secs };
+  }
+
+  function tryLogin() {
+    const user = db.users.find(u => u.id === selUserId);
+    if (!user) return;
+    if (pinBuf.length < 4) { shakeDots(); return updatePinUI("PIN needs at least 4 characters", true); }
+    if (pinHash(pinBuf, user.salt) === user.hash) {
+      db.security.fails = 0; db.security.lockUntil = 0; db.ui.lastUser = user.id;
+      pinBuf = "";
+      save();
+      session = { id: user.id, name: user.name, role: user.role };
+      
+      onLoggedIn(user);
+    } else {
+      pinBuf = "";
+      const { f, secs } = registerFail("login for " + user.name);
+      shakeDots();
+      updatePinUI(secs ? "" : `Wrong PIN — ${5 - f} ${5 - f === 1 ? "try" : "tries"} left`, true);
+    }
+  }
+
+  function resetAdminPin() {
+    const err = $("recover-err");
+    if (isLocked()) { err.textContent = "Too many attempts. Please wait and try again."; return; }
+    const code = normCode($("recover-code").value);
+    const pin = $("recover-pin").value.trim(), pin2 = $("recover-pin2").value.trim();
+    const s = db.settings;
+    if (!s.recoveryHash || hashSecret(code, s.recoverySalt) !== s.recoveryHash) {
+      const { secs } = registerFail("PIN recovery");
+      err.textContent = secs ? `Wrong code. Locked for ${secs}s.` : "Recovery code is incorrect";
+      return;
+    }
+    if (!PIN_RE.test(pin)) { err.textContent = "New PIN must be 4–12 letters or digits"; return; }
+    if (pin !== pin2) { err.textContent = "The two PINs don't match"; return; }
+    const admin = db.users.find(u => u.role === "admin");
+    if (!admin) { err.textContent = "Admin account not found"; return; }
+    admin.salt = makeSalt(); admin.hash = pinHash(pin, admin.salt); delete admin.mustChange;
+    db.security.fails = 0; db.security.lockUntil = 0;
+    selUserId = admin.id;
+    save();
+    
+    renderLogin("Admin PIN reset. Enter the new PIN.");
+  }
+
+  function renderSetup() {
+    showPane("setup");
+    const pane = $("pane-setup");
+    pane.innerHTML = `
+      <h2 class="pane-title">Set up your shop</h2>
+      <p class="muted small" style="margin-top:0">One-time setup. Everything stays on this device.</p>
+      <div class="field" style="margin-top:10px"><label>Shop name</label><input id="su-name" value="${esc(db.settings.companyName)}" /></div>
+      <div class="row" style="margin-top:8px">
+        <div class="field"><label>Admin PIN (4–12 letters or digits)</label><input id="su-pin" type="password" maxlength="12" autocapitalize="off" autocomplete="new-password" /></div>
+        <div class="field"><label>Confirm PIN</label><input id="su-pin2" type="password" maxlength="12" autocapitalize="off" autocomplete="new-password" /></div>
+      </div>
+      <div class="field" style="margin-top:12px">
+        <label>Recovery code — used if the admin PIN is forgotten</label>
+        <input id="su-code" value="${esc(DEFAULT_RECOVERY)}" autocomplete="off" autocapitalize="characters" />
+        <span class="muted small">Anyone who knows this code can reset the admin PIN, so change it to something only you know.</span>
+      </div>
+      <div class="field" style="margin-top:10px"><label>Phone code (optional, 1–3 letters)</label><input id="su-dev" maxlength="3" placeholder="A" autocapitalize="characters" /></div>
+      <p class="muted small" style="margin:4px 0 0">Using billing on more than one phone? Give each phone a different letter so bill numbers never clash.</p>
+      <p class="pin-msg err" id="su-err" style="text-align:left"></p>
+      <button class="btn gold wide" id="su-go" type="button">Create &amp; continue</button>`;
+    $("su-go").onclick = () => {
+      const err = $("su-err");
+      const name = $("su-name").value.trim();
+      const pin = $("su-pin").value.trim(), pin2 = $("su-pin2").value.trim();
+      const dev = $("su-dev").value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+      if (!name) { err.textContent = "Enter the shop name"; return; }
+      if (!PIN_RE.test(pin)) { err.textContent = "PIN must be 4–12 letters or digits"; return; }
+      if (pin !== pin2) { err.textContent = "The two PINs don't match"; return; }
+      const code = $("su-code").value;
+      if (normCode(code).length < 6) { err.textContent = "Recovery code needs at least 6 letters/digits"; return; }
+      const salt = makeSalt(), rs = makeSalt();
+      db.settings.companyName = name;
+      db.settings.deviceCode = dev;
+      db.settings.recoverySalt = rs; db.settings.recoveryHash = hashSecret(normCode(code), rs); db.settings.recoveryMustChange = false;
+      db.users = [{ id: "u-admin", name: "Admin", role: "admin", salt, hash: pinHash(pin, salt) }];
+      db.ui.lastUser = "u-admin";
+      session = { id: "u-admin", name: "Admin", role: "admin" };
+      save(); 
+      onLoggedIn(db.users[0]);
+    };
+  }
+
+  function onLoggedIn(user) {
+    stopFx();
+    lastActive = Date.now();
+    if (lastDraftUser !== user.id) billDraft = emptyDraft();
+    lastDraftUser = user.id;
+    view = "bill";
+    $("login-screen").classList.add("hidden");
+    $("app-screen").classList.remove("hidden");
+    try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+    paintHeader(); renderView(); paintBanner();
+    if (user.mustChange || (user.role === "admin" && db.settings.recoveryMustChange)) forceSecurityUpdate(user);
+  }
+
+  async function forceSecurityUpdate(user) {
+    const needPin = !!user.mustChange;
+    const needCode = user.role === "admin" && db.settings.recoveryMustChange;
+    const fields = [];
+    if (needPin) fields.push({ id: "p1", label: "New PIN (4–12 letters or digits)", type: "password", maxlength: 12 }, { id: "p2", label: "Confirm new PIN", type: "password", maxlength: 12 });
+    if (needCode) fields.push({ id: "rc", label: "New recovery code (write it down!)", value: genRecovery() });
+    const vals = await formModal("Secure your account", fields, {
+      okLabel: "Save", dismissable: false,
+      note: "This account still uses a default PIN or recovery code. Please choose new ones before continuing.",
+      validate: v => {
+        if (needPin && !PIN_RE.test(v.p1.trim())) return "PIN must be 4–12 letters or digits";
+        if (needPin && v.p1.trim() === "1234") return "Please choose something other than 1234";
+        if (needPin && v.p1.trim() !== v.p2.trim()) return "The two PINs don't match";
+        if (needCode && normCode(v.rc).length < 6) return "Recovery code needs at least 6 letters/digits";
+        if (needCode && normCode(v.rc) === "VELU2026") return "Please choose a different recovery code";
+        return "";
+      }
+    });
+    if (needPin) { user.salt = makeSalt(); user.hash = pinHash(vals.p1, user.salt); delete user.mustChange; }
+    if (needCode) { db.settings.recoverySalt = makeSalt(); db.settings.recoveryHash = hashSecret(normCode(vals.rc), db.settings.recoverySalt); db.settings.recoveryMustChange = false; }
+    save(); 
+    toast("Security details saved");
+  }
+
+  function doLogout(msg) {
+    closeModal();
+    $("dialog").classList.add("hidden"); $("dialog").innerHTML = "";
+    renderLogin(msg);
+  }
+  $("btn-logout").onclick = () => doLogout("");
+
+  $("btn-mypin").onclick = async () => {
+    const me = db.users.find(u => u.id === session.id);
+    if (!me) return;
+    const vals = await formModal("Change my PIN", [
+      { id: "cur", label: "Current PIN", type: "password", maxlength: 12 },
+      { id: "p1", label: "New PIN (4–12 letters or digits)", type: "password", maxlength: 12 },
+      { id: "p2", label: "Confirm new PIN", type: "password", maxlength: 12 }
+    ], {
+      validate: v => {
+        if (pinHash(v.cur, me.salt) !== me.hash) return "Current PIN is wrong";
+        if (!PIN_RE.test(v.p1.trim())) return "New PIN must be 4–12 letters or digits";
+        if (v.p1.trim() !== v.p2.trim()) return "The two PINs don't match";
+        return "";
+      }
+    });
+    if (!vals) return;
+    me.salt = makeSalt(); me.hash = pinHash(vals.p1, me.salt);
+    save(); toast("Your PIN was updated");
+  };
+
+  // Auto-logout when idle
+  ["pointerdown", "keydown", "touchstart", "scroll"].forEach(ev =>
+    document.addEventListener(ev, () => { lastActive = Date.now(); }, { passive: true, capture: true }));
+  setInterval(() => {
+    if (!session) return;
+    const m = num(db.settings.idleMinutes);
+    if (m > 0 && Date.now() - lastActive > m * 60000) doLogout("Logged out after inactivity");
+  }, 10000);
+
+  /* ---------- Calculations ---------- */
+  function draftItems() {
+    const items = [];
+    for (const p of db.products) {
+      const q = num(billDraft.qtys[p.id]);
+      if (q > 0) items.push({
+        productId: p.id, sno: p.sno, name: p.name, unit: p.unit, price: num(p.price), qty: q,
+        category: p.category, noDiscount: catNoDisc(p.category), adHoc: false
+      });
+    }
+    billDraft.others.forEach((o, i) => {
+      const q = num(o.qty), price = num(o.price);
+      if (o.name && q > 0 && price >= 0) items.push({
+        productId: "other-" + i, sno: o.sno || "", name: o.name, unit: o.unit || "Nos", price, qty: q,
+        category: "Other Products", noDiscount: !!o.noDiscount, adHoc: true
+      });
+    });
+    return items;
+  }
+
+  function totalsFromItems(items, discountPct) {
+    const pct = Math.min(100, Math.max(0, num(discountPct)));
+    let subtotal = 0, noDiscAmt = 0, discBase = 0;
+    for (const it of items) {
+      const line = num(it.price) * num(it.qty);
+      subtotal += line;
+      if (it.noDiscount) noDiscAmt += line; else discBase += line;
+    }
+    const discountAmt = discBase * pct / 100;
+    return { subtotal, noDiscAmt, discBase, discountAmt, payable: subtotal - discountAmt, pct };
+  }
+  const currentTotals = () => totalsFromItems(draftItems(), billDraft.discountPct);
+
+  function makeSerial(n) {
+    const c = String(db.settings.deviceCode || "").trim().toUpperCase();
+    return "VAV-" + (c ? c + "-" : "") + String(n).padStart(4, "0");
+  }
+
+  /* ---------- App shell ---------- */
+  function paintHeader() {
+    $("shop-name").textContent = db.settings.companyName;
+    $("shop-sub").textContent = db.settings.subtitle || "";
+    $("shop-phones").textContent = (db.settings.phones || []).filter(Boolean).join("  •  ");
+    $("who").textContent = session.name + " · " + session.role;
+    const items = [["bill", "New Bill"], ["history", "History"]];
+    if (isAdmin()) items.push(["trash", "Trash"], ["catalog", "Catalog"], ["staff", "Staff"], ["settings", "Settings"]);
+    const nav = $("nav");
+    nav.innerHTML = items.map(([id, label]) => `<button data-view="${id}" class="${view === id ? "active" : ""}">${label}</button>`).join("");
+    nav.querySelectorAll("button").forEach(b => b.onclick = () => { view = b.dataset.view; renderView(); paintHeader(); });
+  }
+
+  function paintBanner() {
+    const b = $("banner");
+    if (!session || !isAdmin() || !db.bills.length) { b.classList.add("hidden"); return; }
+    const last = db.settings.lastBackup || 0;
+    const days = (Date.now() - last) / 86400000;
+    if (last && days < 3) { b.classList.add("hidden"); return; }
+    b.innerHTML = `<span>${last ? `Last backup was ${Math.floor(days)} day(s) ago.` : "Your bills have never been backed up."} Data lives only in this browser.</span>
+      <button class="btn small gold" id="banner-bk">Back up now</button>`;
+    b.classList.remove("hidden");
+    $("banner-bk").onclick = backupFull;
+  }
+
+  function renderView() {
+    const root = $("view"), foot = $("bill-footer");
+    foot.classList.add("hidden"); foot.innerHTML = "";
+    if (view === "bill") renderBill(root, foot);
+    else if (view === "history") renderHistory(root, false);
+    else if (view === "trash") renderHistory(root, true);
+    else if (view === "catalog") renderCatalog(root);
+    else if (view === "staff") renderStaff(root);
+    else if (view === "settings") renderSettings(root);
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------- New bill ---------- */
+  function renderBill(root, foot) {
+    root.innerHTML = `
+      <div class="card">
+        <div class="row">
+          <div class="field grow"><label>Customer name</label><input id="c-name" value="${esc(billDraft.customerName)}" /></div>
+          <div class="field"><label>Phone</label><input id="c-phone" inputmode="tel" value="${esc(billDraft.phone)}" /></div>
+          <div class="field"><label>Bill date</label><input id="c-date" type="date" value="${esc(billDraft.date)}" /></div>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <div class="field grow"><label>Address</label><input id="c-addr" value="${esc(billDraft.address)}" /></div>
+          <div class="field"><label>Discount %</label><input id="c-disc" type="number" min="0" max="100" step="0.5" value="${esc(billDraft.discountPct)}" /></div>
+        </div>
+        <p class="muted" style="margin:8px 0 0;font-size:.8rem">Discount applies to all items except no-discount categories (Gift Boxes) and ad-hoc lines flagged as no-discount.</p>
+      </div>
+      <input class="search" id="p-search" style="margin-top:12px" placeholder="Search by name or Sl.No…" value="${esc(billDraft.search || "")}" />
+      <div id="cat-list"></div>
+      <div class="card" style="margin-top:12px">
+        <h3 style="margin:0 0 8px">Other Products</h3>
+        <p class="muted" style="margin:0 0 8px;font-size:.8rem">Items not in the catalog. Discount still applies unless you tick No discount.</p>
+        <div id="others"></div>
+        <button class="btn ghost small" id="add-other">+ Add other item</button>
+      </div>`;
+    bindCustomer();
+    // Search only redraws the list, so the keyboard/focus stays put.
+    $("p-search").oninput = e => { billDraft.search = e.target.value; drawCatList(); };
+    drawCatList();
+    renderOthers();
+    $("add-other").onclick = () => { billDraft.others.push({ name: "", price: 0, qty: 1, unit: "Nos", noDiscount: false }); renderView(); };
+    const t = currentTotals();
+    foot.classList.remove("hidden");
+    foot.innerHTML = `
+      <div class="totals">
+        <div>Subtotal<b>${money(t.subtotal)}</b></div>
+        <div>Discount (${t.pct}%)<b>${money(t.discountAmt)}</b></div>
+        <div>No-discount<b>${money(t.noDiscAmt)}</b></div>
+        <div>Payable<strong>${money(t.payable)}</strong></div>
+      </div>
+      <div class="actions-bar">
+        <button class="btn ok" id="save-bill">Save Bill</button>
+        <button class="btn gold" id="print-bill">Print</button>
+        <button class="btn" id="pdf-bill">PDF</button>
+        <button class="btn ghost" id="share-bill">Share PDF</button>
+        <button class="btn ghost" id="clear-bill">Clear</button>
+      </div>`;
+    $("save-bill").onclick = saveBill;
+    $("print-bill").onclick = () => printBill(previewBillObject());
+    $("pdf-bill").onclick = () => downloadPdf(previewBillObject());
+    $("share-bill").onclick = () => sharePdf(previewBillObject());
+    $("clear-bill").onclick = async () => {
+      if (await askConfirm("Clear the current bill?", "Clear", true)) { const d = emptyDraft(); d.discountPct = billDraft.discountPct; billDraft = d; renderView(); }
+    };
+  }
+
+  function drawCatList() {
+    const list = $("cat-list"); if (!list) return;
+    list.innerHTML = "";
+    const q = (billDraft.search || "").trim().toLowerCase();
+    db.categories.forEach(c => {
+      const cat = c.name;
+      const prods = db.products
+        .filter(p => p.category === cat && (!q || p.name.toLowerCase().includes(q) || String(p.sno ?? "").includes(q)))
+        .sort((a, b) => (Number(a.sno) || 0) - (Number(b.sno) || 0));
+      if (!prods.length && q) return;
+      const open = q ? true : catOpen[cat] !== false;
+      const wrap = document.createElement("div");
+      wrap.className = "cat";
+      wrap.innerHTML = `<button class="cat-h">${esc(cat)} ${c.noDiscount ? '<span class="tag">No discount</span>' : ""} <span>${open ? "▾" : "▸"}</span></button>`;
+      const body = document.createElement("div");
+      if (!open) body.classList.add("hidden");
+      prods.forEach(p => body.appendChild(prodRow(p)));
+      wrap.querySelector(".cat-h").onclick = () => { catOpen[cat] = !open; drawCatList(); };
+      wrap.appendChild(body);
+      list.appendChild(wrap);
+    });
+  }
+
+  function bindCustomer() {
+    [["c-name", "customerName"], ["c-phone", "phone"], ["c-addr", "address"], ["c-date", "date"], ["c-disc", "discountPct"]].forEach(([id, key]) => {
+      const el = $(id);
+      el.oninput = () => {
+        billDraft[key] = key === "discountPct" ? Math.min(100, Math.max(0, num(el.value))) : el.value;
+        if (key === "discountPct") refreshTotalsOnly();
+      };
+    });
+  }
+
+  function prodRow(p) {
+    const row = document.createElement("div");
+    row.className = "prod";
+    const q = num(billDraft.qtys[p.id]);
+    row.innerHTML = `
+      <div class="sno">${p.sno === 0 || p.sno ? esc(p.sno) : "—"}</div>
+      <div class="info"><div class="name">${esc(p.name)}</div><div class="meta">Sl.No ${esc(p.sno ?? "—")} · ${esc(p.unit)} · ${money(p.price)}</div></div>
+      <div class="qty">
+        <button type="button" data-d="-1">−</button>
+        <input type="number" min="0" step="1" value="${q}" />
+        <button type="button" data-d="1">+</button>
+      </div>
+      <div class="amt">${q ? money(q * num(p.price)) : ""}</div>`;
+    const inp = row.querySelector(".qty input");
+    const setQ = n => {
+      n = Math.max(0, num(n));
+      if (n) billDraft.qtys[p.id] = n; else delete billDraft.qtys[p.id];
+      inp.value = n;
+      row.querySelector(".amt").textContent = n ? money(n * num(p.price)) : "";
+      refreshTotalsOnly();
+    };
+    inp.oninput = () => setQ(inp.value);
+    row.querySelectorAll("button").forEach(b => b.onclick = () => setQ(num(inp.value) + Number(b.dataset.d)));
+    return row;
+  }
+
+  function renderOthers() {
+    const box = $("others");
+    box.innerHTML = "";
+    billDraft.others.forEach((o, i) => {
+      const d = document.createElement("div");
+      d.className = "row";
+      d.style.marginBottom = "8px";
+      d.innerHTML = `
+        <div class="field grow"><label>Name</label><input data-k="name" value="${esc(o.name)}" /></div>
+        <div class="field"><label>Price</label><input data-k="price" type="number" min="0" step="0.01" value="${esc(o.price)}" /></div>
+        <div class="field"><label>Qty</label><input data-k="qty" type="number" min="0" step="1" value="${esc(o.qty)}" /></div>
+        <div class="field"><label>Unit</label><input data-k="unit" value="${esc(o.unit || "Nos")}" /></div>
+        <div class="field" style="max-width:120px"><label>No discount</label><input data-k="noDiscount" type="checkbox" ${o.noDiscount ? "checked" : ""} /></div>
+        <div class="field" style="max-width:80px"><label>&nbsp;</label><button class="btn red small" type="button">X</button></div>`;
+      d.querySelectorAll("input").forEach(inp => {
+        inp.oninput = () => {
+          if (inp.type === "checkbox") o.noDiscount = inp.checked;
+          else if (inp.dataset.k === "price" || inp.dataset.k === "qty") o[inp.dataset.k] = num(inp.value);
+          else o[inp.dataset.k] = inp.value;
+          refreshTotalsOnly();
+        };
+      });
+      d.querySelector("button").onclick = () => { billDraft.others.splice(i, 1); renderView(); };
+      box.appendChild(d);
+    });
+  }
+
+  function refreshTotalsOnly() {
+    const foot = $("bill-footer");
+    if (!foot || foot.classList.contains("hidden")) return;
+    const t = currentTotals();
+    const divs = foot.querySelectorAll(".totals > div");
+    if (divs.length >= 4) {
+      divs[0].innerHTML = `Subtotal<b>${money(t.subtotal)}</b>`;
+      divs[1].innerHTML = `Discount (${t.pct}%)<b>${money(t.discountAmt)}</b>`;
+      divs[2].innerHTML = `No-discount<b>${money(t.noDiscAmt)}</b>`;
+      divs[3].innerHTML = `Payable<strong>${money(t.payable)}</strong>`;
+    }
+  }
+
+  function previewBillObject() {
+    const items = draftItems();
+    const t = totalsFromItems(items, billDraft.discountPct);
+    return {
+      serial: "DRAFT-" + String(db.nextSerial).padStart(4, "0"),
+      customerName: billDraft.customerName, phone: billDraft.phone, address: billDraft.address, date: billDraft.date,
+      discountPct: t.pct, items, ...t, staffId: session.id, staffName: session.name
+    };
+  }
+
+  function saveBill() {
+    const items = draftItems();
+    if (!items.length) return toast("Add at least one item");
+    const t = totalsFromItems(items, billDraft.discountPct);
+    const n = db.nextSerial++;
+    const bill = {
+      id: uid(), serial: makeSerial(n), serialNum: n,
+      customerName: billDraft.customerName.trim() || "Walk-in",
+      phone: billDraft.phone, address: billDraft.address, date: billDraft.date,
+      discountPct: t.pct, items, ...t,
+      staffId: session.id, staffName: session.name, createdAt: Date.now()
+    };
+    db.bills.unshift(bill);
+    save();
+    
+    // Start a fresh bill (keep the discount %), so tapping Save again can never duplicate it.
+    const d = emptyDraft(); d.discountPct = billDraft.discountPct; billDraft = d;
+    renderView();
+    openBillModal(bill, true);
+    paintBanner();
+  }
+
+  /* ---------- History / Trash ---------- */
+  function visibleBills(fromTrash) {
+    const list = fromTrash ? db.trash : db.bills;
+    return isAdmin() ? list : list.filter(b => b.staffId === session.id);
+  }
+
+  function renderHistory(root, trashMode) {
+    if (trashMode && !isAdmin()) { root.innerHTML = "<div class='card'>Only admin can open Trash.</div>"; return; }
+    const all = visibleBills(trashMode);
+    const staffOpts = [], seen = new Set();
+    all.forEach(b => {
+      const id = b.staffId || b.staffName || "unknown";
+      if (seen.has(id)) return; seen.add(id);
+      staffOpts.push({ id, name: b.staffName || "Unknown" });
+    });
+    db.users.forEach(u => { if (seen.has(u.id)) return; seen.add(u.id); staffOpts.push({ id: u.id, name: u.name }); });
+    const list = isAdmin() && historyStaffFilter !== "all" ? all.filter(b => (b.staffId || b.staffName) === historyStaffFilter) : all;
+    const staffFilterHtml = isAdmin() ? `
+      <div class="row" style="margin-bottom:12px;align-items:flex-end">
+        <div class="field" style="max-width:280px"><label>View bills by staff</label>
+          <select id="hist-staff"><option value="all">All staff</option>
+            ${staffOpts.map(s => `<option value="${esc(s.id)}" ${historyStaffFilter === s.id ? "selected" : ""}>${esc(s.name)}</option>`).join("")}
+          </select></div>
+      </div>` : "";
+    root.innerHTML = `
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center">
+          <h3 style="margin:0 0 10px">${trashMode ? "Trash" : "Bill history"}</h3>
+          ${trashMode ? "" : `<button class="btn small ghost" id="h-export">Export ${isAdmin() ? "all" : "my"} bills (file)</button>`}
+        </div>
+        ${staffFilterHtml}
+        <div style="overflow:auto"><table>
+          <thead><tr><th>Serial</th><th>Customer</th><th>Date</th><th>Total</th>${isAdmin() ? "<th>Staff</th>" : ""}<th></th></tr></thead>
+          <tbody>
+            ${list.length ? list.map(b => `
+              <tr class="clickable" data-id="${esc(b.id)}">
+                <td>${esc(b.serial)}</td><td>${esc(b.customerName)}</td><td>${esc(fmtDate(b.date))}</td><td>${money(b.payable)}</td>
+                ${isAdmin() ? `<td>${esc(b.staffName || "")}</td>` : ""}
+                <td>${trashMode
+                  ? `<button class="btn small ghost" data-a="restore">Restore</button> <button class="btn small red" data-a="gone">Delete forever</button>`
+                  : (isAdmin() ? `<button class="btn small red" data-a="del">Delete</button>` : "")}</td>
+              </tr>`).join("") : `<tr><td colspan="6" class="muted">No bills</td></tr>`}
+          </tbody></table></div>
+      </div>`;
+    const staffSel = $("hist-staff");
+    if (staffSel) staffSel.onchange = () => { historyStaffFilter = staffSel.value; renderView(); };
+    const ex = $("h-export"); if (ex) ex.onclick = exportBills;
+    root.querySelectorAll("tr.clickable").forEach(tr => {
+      tr.onclick = e => {
+        if (e.target.closest("button")) return;
+        const bill = list.find(b => b.id === tr.dataset.id);
+        if (bill) openBillModal(bill);
+      };
+    });
+    root.querySelectorAll("button[data-a]").forEach(btn => {
+      btn.onclick = async e => {
+        e.stopPropagation();
+        const id = btn.closest("tr").dataset.id, a = btn.dataset.a;
+        if (a === "del") {
+          const i = db.bills.findIndex(b => b.id === id); if (i < 0) return;
+          if (!await askConfirm(`Move bill ${db.bills[i].serial} to Trash?`, "Move to Trash", true)) return;
+          const b = db.bills.splice(i, 1)[0]; db.trash.unshift(b); save();
+          renderView(); toast("Moved to Trash");
+        } else if (a === "restore") {
+          const i = db.trash.findIndex(b => b.id === id); if (i < 0) return;
+          const b = db.trash.splice(i, 1)[0]; db.bills.unshift(b); save();
+          renderView(); toast("Bill restored");
+        } else if (a === "gone") {
+          const b = db.trash.find(x => x.id === id); if (!b) return;
+          if (!await askConfirm(`Permanently delete ${b.serial}? This cannot be undone.`, "Delete forever", true)) return;
+          db.trash = db.trash.filter(x => x.id !== id); save();
+          renderView(); toast("Bill permanently deleted");
+        }
+      };
+    });
+  }
+
+  function closeModal() { const m = $("modal"); m.classList.add("hidden"); m.innerHTML = ""; m.onclick = null; }
+
+  function openBillModal(bill, justSaved) {
+    const m = $("modal");
+    m.classList.remove("hidden");
+    m.innerHTML = `<div class="modal">
+      ${justSaved ? `<div class="ribbon">✓ Bill ${esc(bill.serial)} saved</div>` : ""}
+      ${invoiceHTML(bill)}
+      <div class="toolbar">
+        <button class="btn gold" id="m-print">Print</button>
+        <button class="btn" id="m-pdf">Download PDF</button>
+        <button class="btn ghost" id="m-share">Share PDF</button>
+        <button class="btn ghost" id="m-close">Close</button>
+      </div></div>`;
+    m.onclick = e => { if (e.target === m) closeModal(); };
+    $("m-close").onclick = closeModal;
+    $("m-print").onclick = () => printBill(bill);
+    $("m-pdf").onclick = () => downloadPdf(bill);
+    $("m-share").onclick = () => sharePdf(bill);
+  }
+
+  function invoiceHTML(bill) {
+    const phones = (db.settings.phones || []).filter(Boolean).join(" · ");
+    return `<div class="invoice">
+      <div class="invoice-head">
+        <div><h2>${esc(db.settings.companyName)}</h2><div>${esc(db.settings.subtitle || "")}</div><div>${esc(db.settings.address || "")}</div><div>${esc(phones)}</div></div>
+        <div><div><b>Bill No:</b> ${esc(bill.serial)}</div><div><b>Date:</b> ${esc(fmtDate(bill.date))}</div><div><b>Billed by:</b> ${esc(bill.staffName || "")}</div></div>
+      </div>
+      <p><b>Customer:</b> ${esc(bill.customerName || "Walk-in")}<br>
+      ${bill.phone ? "<b>Phone:</b> " + esc(bill.phone) + "<br>" : ""}
+      ${bill.address ? "<b>Address:</b> " + esc(bill.address) : ""}</p>
+      <div style="overflow:auto"><table>
+        <thead><tr><th>Sl.No</th><th>Item</th><th>Qty</th><th>Unit</th><th>Rate</th><th>Amount</th></tr></thead>
+        <tbody>
+          ${(bill.items || []).map((it, i) => `<tr>
+            <td>${esc(it.sno || (i + 1))}</td><td>${esc(it.name)}${it.noDiscount ? ' <span class="badge">ND</span>' : ""}</td>
+            <td>${num(it.qty)}</td><td>${esc(it.unit)}</td><td>${money(it.price)}</td><td>${money(num(it.price) * num(it.qty))}</td>
+          </tr>`).join("")}
+        </tbody></table></div>
+      <p style="text-align:right">
+        Subtotal: <b>${money(bill.subtotal)}</b><br>
+        Discount (${num(bill.discountPct)}%): <b>${money(bill.discountAmt)}</b><br>
+        No-discount amount: <b>${money(bill.noDiscAmt)}</b><br>
+        <span style="font-size:1.15rem">Payable: <b>${money(bill.payable)}</b></span>
+      </p>
+      <p class="muted" style="font-size:.8rem">ND = no discount. Thank you. Light fireworks outdoors, follow local safety rules.</p>
+    </div>`;
+  }
+
+  async function printBill(bill) {
+    if (inViewer()) {
+      // The preview blocks the browser print dialog, so save a PDF that can be printed from any PDF viewer.
+      try {
+        toast("Preparing PDF to print…");
+        const blob = await buildPdf(bill);
+        if (await downloadBlob(blob, pdfName(bill))) toast("Printing isn't possible in the preview — open the saved PDF and print it");
+      } catch (e) { toast("Could not create the PDF"); }
+      return;
+    }
+    $("print-root").innerHTML = invoiceHTML(bill);
+    try { window.print(); } catch (e) { toast("Printing isn't available here — use the PDF button"); }
+  }
+
+  /* ---------- Catalog ---------- */
+  function renderCatalog(root) {
+    if (!isAdmin()) { root.innerHTML = "<div class='card'>Admin only.</div>"; return; }
+    root.innerHTML = `
+      <div class="card">
+        <h3 style="margin-top:0">Categories</h3>
+        <p class="muted" style="font-size:.85rem">Reorder display order. Tick “No discount” for gift/combo packs.</p>
+        <div id="cat-admin"></div>
+        <div class="row" style="margin-top:8px">
+          <div class="field grow"><label>New category</label><input id="new-cat" /></div>
+          <div class="field" style="max-width:140px"><label>&nbsp;</label><button class="btn" id="add-cat">Add category</button></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <h3 style="margin-top:0">Products</h3>
+        <div class="row">
+          <div class="field" style="max-width:110px"><label>Sl.No</label><input id="np-sno" type="number" min="1" step="1" /></div>
+          <div class="field grow"><label>Name</label><input id="np-name" /></div>
+          <div class="field"><label>Price</label><input id="np-price" type="number" min="0" step="0.01" /></div>
+          <div class="field"><label>Unit</label><input id="np-unit" value="Box" /></div>
+          <div class="field"><label>Category</label><select id="np-cat"></select></div>
+        </div>
+        <div class="toolbar"><button class="btn" id="np-add">Add product</button></div>
+        <input class="search" id="cp-search" placeholder="Filter products…" />
+        <div style="overflow:auto"><table><thead><tr><th>Sl.No</th><th>Name</th><th>Price</th><th>Unit</th><th>Category</th><th></th></tr></thead><tbody id="p-body"></tbody></table></div>
+      </div>`;
+    $("np-cat").innerHTML = db.categories.map(c => `<option>${esc(c.name)}</option>`).join("");
+    $("add-cat").onclick = () => {
+      const name = $("new-cat").value.trim();
+      if (!name) return;
+      if (db.categories.some(c => c.name === name)) return toast("Category exists");
+      db.categories.push({ name, noDiscount: false });
+      save(); renderView();
+    };
+    drawCatAdmin();
+    const drawProds = () => {
+      const f = ($("cp-search").value || "").toLowerCase();
+      $("p-body").innerHTML = db.products
+        .filter(p => !f || p.name.toLowerCase().includes(f) || p.category.toLowerCase().includes(f) || String(p.sno ?? "").includes(f))
+        .slice().sort((a, b) => (Number(a.sno) || 0) - (Number(b.sno) || 0))
+        .map(p => `<tr data-id="${esc(p.id)}">
+          <td><input data-k="sno" type="number" min="1" step="1" value="${esc(p.sno ?? "")}" style="width:72px" /></td>
+          <td><input data-k="name" value="${esc(p.name)}" /></td>
+          <td><input data-k="price" type="number" min="0" step="0.01" value="${num(p.price)}" style="width:90px" /></td>
+          <td><input data-k="unit" value="${esc(p.unit)}" style="width:70px" /></td>
+          <td><select data-k="category">${db.categories.map(c => `<option ${c.name === p.category ? "selected" : ""}>${esc(c.name)}</option>`).join("")}</select></td>
+          <td><button class="btn small red" data-a="rm">Delete</button></td>
+        </tr>`).join("");
+      document.querySelectorAll("#p-body tr").forEach(tr => {
+        const p = productById(tr.dataset.id);
+        if (!p) return;
+        tr.querySelectorAll("input,select").forEach(inp => {
+          inp.dataset.old = inp.value;
+          const apply = () => {
+            if (inp.dataset.k === "price" || inp.dataset.k === "sno") p[inp.dataset.k] = Math.max(0, num(inp.value));
+            else p[inp.dataset.k] = inp.value;
+            save();
+          };
+          inp.addEventListener("input", apply);
+          inp.addEventListener("change", () => {
+            apply();
+            if (inp.value !== inp.dataset.old) {
+              
+              inp.dataset.old = inp.value;
+            }
+          });
+        });
+        tr.querySelector("[data-a=rm]").onclick = async () => {
+          if (!await askConfirm(`Delete “${p.name}” from the catalog?`, "Delete", true)) return;
+          db.products = db.products.filter(x => x.id !== p.id);
+          save(); drawProds();
+        };
+      });
+    };
+    $("cp-search").oninput = drawProds;
+    $("np-add").onclick = () => {
+      const name = $("np-name").value.trim();
+      if (!name) return toast("Enter a product name");
+      const nextSno = Math.max(0, ...db.products.map(p => Number(p.sno) || 0)) + 1;
+      const sno = Number($("np-sno").value || nextSno);
+      const price = Math.max(0, num($("np-price").value));
+      db.products.push({ id: uid(), sno, name, price, unit: $("np-unit").value || "Box", category: $("np-cat").value });
+      save(); 
+      $("np-name").value = ""; $("np-sno").value = sno + 1;
+      drawProds(); toast("Product added");
+    };
+    drawProds();
+    $("np-sno").value = Math.max(0, ...db.products.map(p => Number(p.sno) || 0)) + 1;
+  }
+
+  function drawCatAdmin() {
+    const box = $("cat-admin");
+    box.innerHTML = db.categories.map((c, i) => `
+      <div class="row" data-i="${i}" style="align-items:center;margin-bottom:6px">
+        <button class="btn small ghost" data-m="-1">↑</button>
+        <button class="btn small ghost" data-m="1">↓</button>
+        <input data-k="name" value="${esc(c.name)}" style="flex:1" />
+        <label style="display:flex;gap:6px;align-items:center;font-size:.85rem"><input type="checkbox" data-k="nd" ${c.noDiscount ? "checked" : ""}/> No discount</label>
+        <button class="btn small red" data-a="rm">Remove</button>
+      </div>`).join("");
+    box.querySelectorAll(".row").forEach(row => {
+      const i = Number(row.dataset.i);
+      row.querySelector("[data-m='-1']").onclick = () => moveCat(i, -1);
+      row.querySelector("[data-m='1']").onclick = () => moveCat(i, 1);
+      row.querySelector("[data-k=name]").onchange = e => {
+        const old = db.categories[i].name, neu = e.target.value.trim();
+        if (!neu || (neu !== old && db.categories.some(c => c.name === neu))) { e.target.value = old; return; }
+        db.products.forEach(p => { if (p.category === old) p.category = neu; });
+        db.categories[i].name = neu; save(); 
+      };
+      row.querySelector("[data-k=nd]").onchange = e => {
+        db.categories[i].noDiscount = e.target.checked; save();
+        
+      };
+      row.querySelector("[data-a=rm]").onclick = async () => {
+        if (db.products.some(p => p.category === db.categories[i].name)) return toast("Move or delete products in this category first");
+        if (!await askConfirm(`Remove category “${db.categories[i].name}”?`, "Remove", true)) return;
+        const n = db.categories[i].name; db.categories.splice(i, 1); save(); renderView();
+      };
+    });
+  }
+  function moveCat(i, dir) {
+    const j = i + dir;
+    if (j < 0 || j >= db.categories.length) return;
+    [db.categories[i], db.categories[j]] = [db.categories[j], db.categories[i]];
+    save(); renderView();
+  }
+
+  /* ---------- Staff ---------- */
+  function renderStaff(root) {
+    if (!isAdmin()) { root.innerHTML = "<div class='card'>Admin only.</div>"; return; }
+    root.innerHTML = `
+      <div class="card">
+        <h3 style="margin-top:0">Add staff</h3>
+        <div class="row">
+          <div class="field grow"><label>Name</label><input id="st-name" /></div>
+          <div class="field"><label>PIN (4–12 letters or digits)</label><input id="st-pin" type="password" maxlength="12" autocapitalize="off" autocomplete="new-password" /></div>
+          <div class="field" style="max-width:140px"><label>&nbsp;</label><button class="btn" id="st-add">Add staff</button></div>
+        </div>
+        <p class="muted small" style="margin-bottom:0">PINs are stored scrambled and can never be viewed — if someone forgets theirs, use Reset PIN.</p>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <h3 style="margin-top:0">Accounts</h3>
+        <div style="overflow:auto"><table>
+          <thead><tr><th>Name</th><th>Role</th><th></th></tr></thead>
+          <tbody>
+            ${db.users.map(u => `<tr data-id="${esc(u.id)}">
+              <td><input data-k="name" value="${esc(u.name)}" /></td>
+              <td>${esc(u.role)}</td>
+              <td>${u.role === "admin" ? `<span class="muted small">Use “Change PIN” at the top</span>`
+                : `<button class="btn small ghost" data-a="reset">Reset PIN</button> <button class="btn small red" data-a="rm">Remove</button>`}</td>
+            </tr>`).join("")}
+          </tbody></table></div>
+      </div>`;
+    $("st-add").onclick = () => {
+      const name = $("st-name").value.trim(), pin = $("st-pin").value.trim();
+      if (!name) return toast("Enter a name");
+      if (db.users.some(u => u.name.toLowerCase() === name.toLowerCase())) return toast("That name is already used");
+      if (!PIN_RE.test(pin)) return toast("PIN must be 4–12 letters or digits");
+      const salt = makeSalt();
+      db.users.push({ id: uid(), name, role: "staff", salt, hash: pinHash(pin, salt) });
+      save(); renderView(); toast("Staff added");
+    };
+    root.querySelectorAll("tbody tr").forEach(tr => {
+      const u = db.users.find(x => x.id === tr.dataset.id);
+      if (!u) return;
+      tr.querySelector("input").onchange = e => {
+        const nm = e.target.value.trim();
+        if (!nm || db.users.some(x => x.id !== u.id && x.name.toLowerCase() === nm.toLowerCase())) { e.target.value = u.name; return toast("Name is empty or already used"); }
+        const old = u.name; u.name = nm; save(); 
+      };
+      const reset = tr.querySelector("[data-a=reset]");
+      if (reset) reset.onclick = async () => {
+        const vals = await formModal(`Reset PIN for ${u.name}`, [
+          { id: "p1", label: "New PIN (4–12 letters or digits)", type: "password", maxlength: 12 },
+          { id: "p2", label: "Confirm new PIN", type: "password", maxlength: 12 }
+        ], { validate: v => !PIN_RE.test(v.p1.trim()) ? "PIN must be 4–12 letters or digits" : v.p1.trim() !== v.p2.trim() ? "The two PINs don't match" : "" });
+        if (!vals) return;
+        u.salt = makeSalt(); u.hash = pinHash(vals.p1, u.salt); save(); toast("PIN updated");
+      };
+      const rm = tr.querySelector("[data-a=rm]");
+      if (rm) rm.onclick = async () => {
+        if (!await askConfirm(`Remove staff account “${u.name}”? Their saved bills stay in History.`, "Remove", true)) return;
+        db.users = db.users.filter(x => x.id !== u.id); save(); renderView();
+      };
+    });
+  }
+
+  /* ---------- Settings + Backup ---------- */
+  function renderSettings(root) {
+    if (!isAdmin()) { root.innerHTML = "<div class='card'>Admin only.</div>"; return; }
+    const s = db.settings;
+    const last = s.lastBackup ? new Date(s.lastBackup).toLocaleString("en-IN") : "never";
+    root.innerHTML = `
+      <div class="card">
+        <h3 style="margin-top:0">Shop settings</h3>
+        <div class="field"><label>Company name</label><input id="s-name" value="${esc(s.companyName)}" /></div>
+        <div class="field" style="margin-top:8px"><label>Subtitle</label><input id="s-sub" value="${esc(s.subtitle)}" /></div>
+        <div class="field" style="margin-top:8px"><label>Address (optional)</label><input id="s-addr" value="${esc(s.address || "")}" /></div>
+        <div class="field" style="margin-top:8px"><label>Phone numbers (one per line)</label><textarea id="s-phones">${esc((s.phones || []).join("\n"))}</textarea></div>
+        <div class="row" style="margin-top:8px">
+          <div class="field"><label>Phone code (1–3 letters, goes in bill numbers)</label><input id="s-dev" maxlength="3" value="${esc(s.deviceCode || "")}" /></div>
+          <div class="field"><label>Auto-logout after idle (minutes, 0 = never)</label><input id="s-idle" type="number" min="0" max="240" value="${esc(s.idleMinutes)}" /></div>
+        </div>
+        <div class="toolbar"><button class="btn gold" id="s-save">Save settings</button></div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3 style="margin-top:0">Security</h3>
+        <p class="muted small">The recovery code is stored scrambled, so it can't be displayed again. If it is lost, set a new one here.</p>
+        <button class="btn ghost" id="s-rc">Set a new recovery code</button>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3 style="margin-top:0">Backup &amp; sync</h3>
+        <p class="muted small">Everything is stored only in this browser. Last full backup: <b>${esc(last)}</b>. Keep backup files private — they contain all bills.</p>
+        <div class="toolbar">
+          <button class="btn" id="s-backup">Download full backup</button>
+          <button class="btn ghost" id="s-restore">Restore from backup…</button>
+          <button class="btn ghost" id="s-merge">Merge bills from another phone…</button>
+        </div>
+        <p class="muted small" style="margin-bottom:0">Several phones? Give each a different phone code, have staff use History → “Export my bills”, then merge those files here to see every bill in one place.</p>
+      </div>`;
+    $("s-save").onclick = () => {
+      const dev = $("s-dev").value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+      db.settings.companyName = $("s-name").value.trim() || "Shop";
+      db.settings.subtitle = $("s-sub").value.trim();
+      db.settings.address = $("s-addr").value.trim();
+      db.settings.phones = $("s-phones").value.split(/\n+/).map(x => x.trim()).filter(Boolean);
+      db.settings.deviceCode = dev;
+      db.settings.idleMinutes = Math.min(240, Math.max(0, Math.floor(num($("s-idle").value))));
+      save(); paintHeader(); toast("Shop settings saved");
+    };
+    $("s-rc").onclick = async () => {
+      const admin = db.users.find(u => u.role === "admin");
+      const vals = await formModal("New recovery code", [
+        { id: "pin", label: "Your admin PIN", type: "password", maxlength: 12 },
+        { id: "rc", label: "New recovery code", value: DEFAULT_RECOVERY }
+      ], {
+        validate: v => pinHash(v.pin, admin.salt) !== admin.hash ? "Admin PIN is wrong"
+          : normCode(v.rc).length < 6 ? "Recovery code needs at least 6 letters/digits" : ""
+      });
+      if (!vals) return;
+      db.settings.recoverySalt = makeSalt(); db.settings.recoveryHash = hashSecret(normCode(vals.rc), db.settings.recoverySalt);
+      db.settings.recoveryMustChange = false; save(); toast("Recovery code updated");
+    };
+    $("s-backup").onclick = async () => { await backupFull(); renderView(); };
+    $("s-restore").onclick = restoreBackup;
+    $("s-merge").onclick = mergeBills;
+  }
+
+  function stamp() {
+    const d = new Date(), p = n => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
+  }
+  // Inside the claude.ai preview, plain downloads are blocked, so the viewer's "downloads" capability is used.
+  // In your own copy of the file (opened from a phone, PC or web host) the normal browser download is used.
+  const inViewer = () => !!(window.claude && typeof window.claude.use === "function");
+  let dlCapPromise = null;
+  function getDownloadsCap() {
+    if (!inViewer()) return Promise.resolve(null);
+    if (!dlCapPromise) dlCapPromise = Promise.resolve(window.claude.use("downloads")).catch(() => null);
+    return dlCapPromise;
+  }
+  async function downloadBlob(blob, name) {
+    const cap = await getDownloadsCap();
+    if (cap && typeof cap.save === "function") {
+      try { await cap.save({ filename: name, data: blob }); return true; }
+      catch (e) { toast(e && e.code === "declined" ? "Save cancelled" : "Could not save the file here"); return false; }
+    }
+    try {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+      return true;
+    } catch (e) { toast("Could not save the file"); return false; }
+  }
+  async function backupFull() {
+    const payload = { type: "vav-backup", version: 2, exportedAt: Date.now(), data: db };
+    const ok = await downloadBlob(new Blob([JSON.stringify(payload)], { type: "application/json" }), `VAV-backup-${stamp()}.json`);
+    if (!ok) return;
+    db.settings.lastBackup = Date.now();
+    save(); paintBanner(); toast("Backup downloaded");
+  }
+  async function exportBills() {
+    const bills = visibleBills(false);
+    const payload = { type: "vav-bills", version: 2, exportedAt: Date.now(), phoneCode: db.settings.deviceCode || "", by: session.name, bills };
+    if (await downloadBlob(new Blob([JSON.stringify(payload)], { type: "application/json" }), `VAV-bills-${(session.name || "user").replace(/\W+/g, "")}-${stamp()}.json`)) toast("Bills exported");
+  }
+  function pickFile() {
+    return new Promise(resolve => {
+      const i = document.createElement("input");
+      i.type = "file"; i.accept = ".json,application/json";
+      i.onchange = () => resolve(i.files[0] || null);
+      i.click();
+    });
+  }
+  async function readJsonFile(file) {
+    try { return JSON.parse(await file.text()); } catch (e) { toast("That file could not be read"); return null; }
+  }
+
+  function normalizeBill(b) {
+    if (!b || typeof b !== "object" || !Array.isArray(b.items)) return null;
+    const items = b.items.map(it => ({
+      productId: String(it.productId || ""), sno: it.sno ?? "", name: String(it.name || ""), unit: String(it.unit || ""),
+      price: num(it.price), qty: num(it.qty), category: String(it.category || ""), noDiscount: !!it.noDiscount, adHoc: !!it.adHoc
+    }));
+    const t = totalsFromItems(items, b.discountPct);
+    return {
+      id: String(b.id || uid()), serial: String(b.serial || "IMPORTED"), serialNum: num(b.serialNum),
+      customerName: String(b.customerName || "Walk-in"), phone: String(b.phone || ""), address: String(b.address || ""),
+      date: String(b.date || ""), discountPct: t.pct, items, ...t,
+      staffId: String(b.staffId || ""), staffName: String(b.staffName || ""), createdAt: num(b.createdAt)
+    };
+  }
+
+  async function mergeBills() {
+    const file = await pickFile(); if (!file) return;
+    const obj = await readJsonFile(file); if (!obj) return;
+    const incoming = obj.type === "vav-bills" ? obj.bills : obj.type === "vav-backup" && obj.data ? obj.data.bills : null;
+    if (!Array.isArray(incoming)) return toast("This is not a VAV bills or backup file");
+    const ids = new Set([...db.bills, ...db.trash].map(b => b.id));
+    const serials = new Set([...db.bills, ...db.trash].map(b => b.serial));
+    let added = 0, skipped = 0, renamed = 0;
+    incoming.forEach(raw => {
+      const b = normalizeBill(raw);
+      if (!b) return;
+      if (ids.has(b.id)) { skipped++; return; }
+      if (serials.has(b.serial)) { let k = 2; while (serials.has(b.serial + "-" + k)) k++; b.serial = b.serial + "-" + k; renamed++; }
+      ids.add(b.id); serials.add(b.serial); db.bills.push(b); added++;
+    });
+    db.bills.sort((a, b) => num(b.createdAt) - num(a.createdAt));
+    save(); 
+    toast(`${added} bill(s) added, ${skipped} already present`);
+    renderView(); paintBanner();
+  }
+
+  async function restoreBackup() {
+    const file = await pickFile(); if (!file) return;
+    const obj = await readJsonFile(file); if (!obj) return;
+    if (obj.type !== "vav-backup" || !obj.data || !Array.isArray(obj.data.users) || !Array.isArray(obj.data.bills)) return toast("This is not a VAV full-backup file");
+    if (!obj.data.users.some(u => u.role === "admin")) return toast("Backup has no admin account — refusing to restore");
+    const when = obj.exportedAt ? new Date(obj.exportedAt).toLocaleString("en-IN") : "unknown date";
+    if (!await askConfirm(`Replace EVERYTHING on this phone with the backup from ${when} (${obj.data.bills.length} bills)? This cannot be undone.`, "Replace all data", true)) return;
+    const { state } = normalizeState(obj.data);
+    state.security = { fails: 0, lockUntil: 0 };
+    db = state; save();
+    toast("Backup restored — please log in again");
+    doLogout("Backup restored. Please log in.");
+  }
+
+  /* ---------- PDF (drawn on canvas so Tamil, ₹ and all fonts render correctly) ---------- */
+  const PW = 595, PH = 842, SC = 2;
+
+  async function ensureFonts() {
+    try {
+      if (document.fonts && document.fonts.load) {
+        await Promise.race([
+          Promise.all([document.fonts.load('9px "Noto Sans Tamil"', "தமிழ்"), document.fonts.load('bold 9px "Noto Sans Tamil"', "தமிழ்")]),
+          new Promise(r => setTimeout(r, 2500))
+        ]);
+      }
+    } catch (e) { /* fall back to system fonts */ }
+  }
+  const fnt = (size, bold) => `${bold ? "bold " : ""}${size}px ${FONT_STACK}`;
+  const plainMoney = n => num(n).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  function wrapCanvas(ctx, text, maxW) {
+    const out = [];
+    String(text ?? "").split(/\n/).forEach(par => {
+      let cur = "";
+      par.split(/\s+/).filter(Boolean).forEach(word => {
+        const test = cur ? cur + " " + word : word;
+        if (ctx.measureText(test).width <= maxW) { cur = test; return; }
+        if (cur) out.push(cur);
+        if (ctx.measureText(word).width <= maxW) { cur = word; return; }
+        let piece = "";
+        for (const ch of word) {           // very long word: split by character
+          if (ctx.measureText(piece + ch).width > maxW && piece) { out.push(piece); piece = ch; } else piece += ch;
+        }
+        cur = piece;
+      });
+      out.push(cur);
+    });
+    return out.length ? out : [""];
+  }
+
+  async function renderBillPages(bill) {
+    await ensureFonts();
+    const s = db.settings;
+    const pages = [];
+    let cv, ctx, y;
+    const L = 40, R = 555;
+    const colSl = 46, colItem = 78, itemW = 236, qtyR = 352, unitX = 362, rateR = 460, amtR = 549;
+
+    function fitText(text, x, yy, maxW, size, bold, color, align) {
+      let sz = size;
+      ctx.font = fnt(sz, bold);
+      while (sz > 8 && ctx.measureText(text).width > maxW) { sz -= 0.5; ctx.font = fnt(sz, bold); }
+      ctx.fillStyle = color; ctx.textAlign = align || "left"; ctx.fillText(text, x, yy);
+    }
+    function head(full) {
+      const g = ctx.createLinearGradient(0, 0, PW, 0);
+      g.addColorStop(0, "#1b1f4b"); g.addColorStop(0.7, "#3a1d4a"); g.addColorStop(1, "#7a1f1f");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, PW, full ? 92 : 44);
+      ctx.fillStyle = "#c9a227"; ctx.fillRect(0, full ? 92 : 44, PW, 3);
+      if (full) {
+        fitText(s.companyName, L, 36, 320, 20, true, "#ead48a");
+        fitText(s.subtitle || "", L, 53, 320, 9.5, false, "#ffffff");
+        let yy = 66;
+        if (s.address) { fitText(s.address, L, yy, 320, 9, false, "#e9e4f5"); yy += 12; }
+        fitText((s.phones || []).filter(Boolean).join("  |  "), L, yy, 320, 9, false, "#e9e4f5");
+        fitText("INVOICE", R, 34, 200, 15, true, "#ead48a", "right");
+        fitText("Bill No: " + bill.serial, R, 52, 200, 10, true, "#ffffff", "right");
+        fitText("Date: " + fmtDate(bill.date), R, 66, 200, 10, false, "#ffffff", "right");
+        fitText("Billed by: " + (bill.staffName || ""), R, 80, 200, 9.5, false, "#ffffff", "right");
+        return 108;
+      }
+      fitText(s.companyName, L, 28, 300, 13, true, "#ead48a");
+      fitText("Bill No: " + bill.serial + "  ·  " + fmtDate(bill.date), R, 28, 240, 10, false, "#ffffff", "right");
+      return 62;
+    }
+    function customerBlock(yy) {
+      ctx.font = fnt(9.5, false);
+      const addr = bill.address ? wrapCanvas(ctx, bill.address, 470) : [];
+      const h = 44 + (bill.phone ? 14 : 0) + addr.length * 13;
+      ctx.fillStyle = "#fbf6ea"; ctx.fillRect(L, yy, R - L, h);
+      ctx.strokeStyle = "#e6dcc8"; ctx.lineWidth = 1; ctx.strokeRect(L + 0.5, yy + 0.5, R - L - 1, h - 1);
+      ctx.textAlign = "left"; ctx.fillStyle = "#7a7390"; ctx.font = fnt(8, true); ctx.fillText("BILL TO", L + 10, yy + 15);
+      ctx.fillStyle = "#111"; ctx.font = fnt(12, true); ctx.fillText(bill.customerName || "Walk-in", L + 10, yy + 31);
+      let ty = yy + 31;
+      ctx.font = fnt(9.5, false); ctx.fillStyle = "#333";
+      if (bill.phone) { ty += 14; ctx.fillText("Phone: " + bill.phone, L + 10, ty); }
+      addr.forEach(ln => { ty += 13; ctx.fillText(ln, L + 10, ty); });
+      return yy + h + 14;
+    }
+    function tableHead(yy) {
+      ctx.fillStyle = "#1b1f4b"; ctx.fillRect(L, yy, R - L, 20);
+      ctx.fillStyle = "#fff"; ctx.font = fnt(9, true);
+      ctx.textAlign = "left"; ctx.fillText("Sl", colSl, yy + 14); ctx.fillText("Item", colItem, yy + 14); ctx.fillText("Unit", unitX, yy + 14);
+      ctx.textAlign = "right"; ctx.fillText("Qty", qtyR, yy + 14); ctx.fillText("Rate (₹)", rateR, yy + 14); ctx.fillText("Amount (₹)", amtR, yy + 14);
+      return yy + 20;
+    }
+    function newPage(first, withTable) {
+      cv = document.createElement("canvas");
+      cv.width = PW * SC; cv.height = PH * SC;
+      ctx = cv.getContext("2d");
+      ctx.scale(SC, SC);
+      ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, PW, PH);
+      ctx.textBaseline = "alphabetic";
+      pages.push({ cv, ctx });
+      y = head(first);
+      if (first) y = customerBlock(y);
+      if (withTable) y = tableHead(y);
+    }
+
+    newPage(true, true);
+    const rows = bill.items || [];
+    rows.forEach((it, i) => {
+      ctx.font = fnt(9, false);
+      const lines = wrapCanvas(ctx, String(it.name || "") + (it.noDiscount ? "  [ND]" : ""), itemW);
+      const rowH = lines.length * 12 + 8;
+      if (y + rowH > PH - 62) newPage(false, true);
+      if (i % 2) { ctx.fillStyle = "#fbf6ea"; ctx.fillRect(L, y, R - L, rowH); }
+      ctx.fillStyle = "#111"; ctx.font = fnt(9, false);
+      ctx.textAlign = "left"; ctx.fillText(String(it.sno || (i + 1)), colSl, y + 14);
+      lines.forEach((ln, li) => ctx.fillText(ln, colItem, y + 14 + li * 12));
+      ctx.fillText(String(it.unit || ""), unitX, y + 14);
+      ctx.textAlign = "right";
+      ctx.fillText(String(num(it.qty)), qtyR, y + 14);
+      ctx.fillText(plainMoney(it.price), rateR, y + 14);
+      ctx.fillText(plainMoney(num(it.price) * num(it.qty)), amtR, y + 14);
+      ctx.strokeStyle = "#e6dcc8"; ctx.lineWidth = 0.6;
+      ctx.beginPath(); ctx.moveTo(L, y + rowH); ctx.lineTo(R, y + rowH); ctx.stroke();
+      y += rowH;
+    });
+
+    if (y + 120 > PH - 56) newPage(false, false);
+    y += 14;
+    const bx = 335, bw = R - bx;
+    ctx.font = fnt(10, false);
+    const row = (label, val) => {
+      ctx.textAlign = "left"; ctx.fillStyle = "#444"; ctx.fillText(label, bx + 10, y);
+      ctx.textAlign = "right"; ctx.fillStyle = "#111"; ctx.font = fnt(10, true); ctx.fillText(val, R - 10, y); ctx.font = fnt(10, false);
+      y += 16;
+    };
+    row("Subtotal", money(bill.subtotal));
+    row(`Discount (${num(bill.discountPct)}%)`, "− " + money(bill.discountAmt));
+    row("No-discount items", money(bill.noDiscAmt));
+    y += 2;
+    ctx.fillStyle = "#c9a227"; ctx.fillRect(bx, y - 12, bw, 1.5);
+    y += 4;
+    ctx.fillStyle = "#1b1f4b"; ctx.fillRect(bx, y - 10, bw, 30);
+    ctx.textAlign = "left"; ctx.fillStyle = "#ead48a"; ctx.font = fnt(11, true); ctx.fillText("PAYABLE", bx + 10, y + 10);
+    ctx.textAlign = "right"; ctx.fillStyle = "#ffffff"; ctx.font = fnt(14, true); ctx.fillText(money(bill.payable), R - 10, y + 11);
+    y += 34;
+    ctx.textAlign = "left"; ctx.fillStyle = "#6b6580"; ctx.font = fnt(8.5, false);
+    ctx.fillText("ND = no discount.", L, y - 14);
+
+    pages.forEach((pg, i) => {
+      const c = pg.ctx;
+      c.fillStyle = "#c9a227"; c.fillRect(L, PH - 46, R - L, 1);
+      c.font = fnt(8, false); c.fillStyle = "#6b6580"; c.textAlign = "left";
+      c.fillText("Thank you! Light fireworks outdoors, away from children, and follow local safety rules.", L, PH - 30);
+      c.textAlign = "right"; c.fillText(`Page ${i + 1} of ${pages.length}`, R, PH - 30);
+    });
+    return pages.map(p => p.cv);
+  }
+
+  function canvasToJpeg(cv) {
+    const b64 = cv.toDataURL("image/jpeg", 0.92).split(",")[1];
+    const bin = atob(b64), u = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+    return u;
+  }
+
+  function assemblePdf(jpegs) {
+    const enc = new TextEncoder(), parts = [], offs = [];
+    let pos = 0;
+    const put = d => { const u = typeof d === "string" ? enc.encode(d) : d; parts.push(u); pos += u.length; };
+    const n = jpegs.length;
+    put(new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34, 0x0a, 0x25, 0xe2, 0xe3, 0xcf, 0xd3, 0x0a]));
+    const obj = (num_, fn) => { offs[num_] = pos; put(`${num_} 0 obj\n`); fn(); put("endobj\n"); };
+    obj(1, () => put("<< /Type /Catalog /Pages 2 0 R >>\n"));
+    obj(2, () => put(`<< /Type /Pages /Count ${n} /Kids [${jpegs.map((_, i) => `${3 + i * 3} 0 R`).join(" ")}] >>\n`));
+    jpegs.forEach((j, i) => {
+      const pg = 3 + i * 3, ct = pg + 1, im = pg + 2;
+      obj(pg, () => put(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PW} ${PH}] /Resources << /XObject << /Im0 ${im} 0 R >> >> /Contents ${ct} 0 R >>\n`));
+      const cs = `q ${PW} 0 0 ${PH} 0 0 cm /Im0 Do Q`;
+      obj(ct, () => put(`<< /Length ${cs.length} >>\nstream\n${cs}\nendstream\n`));
+      obj(im, () => {
+        put(`<< /Type /XObject /Subtype /Image /Width ${PW * SC} /Height ${PH * SC} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${j.length} >>\nstream\n`);
+        put(j); put("\nendstream\n");
+      });
+    });
+    const total = 2 + n * 3, xrefPos = pos;
+    let x = `xref\n0 ${total + 1}\n0000000000 65535 f \n`;
+    for (let i = 1; i <= total; i++) x += String(offs[i]).padStart(10, "0") + " 00000 n \n";
+    x += `trailer\n<< /Size ${total + 1} /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF\n`;
+    put(x);
+    return new Blob(parts, { type: "application/pdf" });
+  }
+
+  async function buildPdf(bill) {
+    const canvases = await renderBillPages(bill);
+    return assemblePdf(canvases.map(canvasToJpeg));
+  }
+
+  function pdfName(bill) {
+    return (db.settings.companyName.replace(/\s+/g, "-") + "-" + (bill.serial || "bill") + ".pdf").replace(/[^\w.\-]+/g, "");
+  }
+
+  async function downloadPdf(bill) {
+    try {
+      toast("Preparing PDF…");
+      const blob = await buildPdf(bill);
+      if (await downloadBlob(blob, pdfName(bill))) toast("PDF saved");
+    } catch (e) { toast("Could not create the PDF"); }
+  }
+
+  async function sharePdf(bill) {
+    let blob;
+    try { blob = await buildPdf(bill); } catch (e) { return toast("Could not create the PDF"); }
+    const file = new File([blob], pdfName(bill), { type: "application/pdf" });
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: db.settings.companyName, text: "Bill " + bill.serial });
+        toast("Share sheet opened");
+        return;
+      }
+    } catch (e) {
+      if (e && e.name === "AbortError") return;
+    }
+    if (await downloadBlob(blob, pdfName(bill))) toast("Sharing isn't available here — PDF saved instead");
+  }
+
+  /* ---------- Start ---------- */
+  initLogin();
+  renderLogin();
+  </script>
+</body>
+</html>
